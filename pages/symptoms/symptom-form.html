@@ -1,0 +1,111 @@
+<section class="max-w-3xl mx-auto p-6">
+  <h2 class="text-2xl font-bold mb-6 text-gray-800">Registrar Sintoma</h2>
+
+  <form id="symptomForm" class="space-y-4">
+    <!-- Tipo de Sintoma -->
+    <div>
+      <label
+        for="symptomType"
+        class="block text-sm font-medium text-gray-700 mb-1"
+        >Sintoma</label
+      >
+      <select
+        id="symptomType"
+        name="symptomType"
+        required
+        class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      >
+        <option value="">Selecione...</option>
+        <option value="dor_cabeca">Dor de cabeça</option>
+        <option value="nausea">Náusea</option>
+        <option value="febre">Febre</option>
+        <option value="fadiga">Fadiga</option>
+        <option value="dor_muscular">Dor muscular</option>
+        <option value="outro">Outro</option>
+      </select>
+    </div>
+
+    <!-- Intensidade -->
+    <div>
+      <label
+        for="painLevel"
+        class="block text-sm font-medium text-gray-700 mb-1"
+        >Intensidade da dor (1 a 10)</label
+      >
+      <input
+        type="number"
+        id="painLevel"
+        name="painLevel"
+        min="1"
+        max="10"
+        required
+        class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      />
+    </div>
+
+    <!-- Observação -->
+    <div>
+      <label for="notes" class="block text-sm font-medium text-gray-700 mb-1"
+        >Observações</label
+      >
+      <textarea
+        id="notes"
+        name="notes"
+        rows="3"
+        placeholder="Ex: começou após o almoço..."
+        class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      ></textarea>
+    </div>
+
+    <!-- Data -->
+    <div>
+      <label for="date" class="block text-sm font-medium text-gray-700 mb-1"
+        >Data</label
+      >
+      <input
+        type="date"
+        id="date"
+        name="date"
+        required
+        class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      />
+    </div>
+
+    <!-- Botões -->
+    <div class="flex justify-end space-x-2 pt-4">
+      <a
+        href="#/symptomcard"
+        class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+        >Cancelar</a
+      >
+      <button
+        type="submit"
+        class="px-4 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700"
+      >
+        Salvar
+      </button>
+    </div>
+  </form>
+</section>
+
+<script>
+  document.getElementById("symptomForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const form = e.target;
+    const data = {
+      type: form.symptomType.value,
+      level: form.painLevel.value,
+      notes: form.notes.value,
+      date: form.date.value,
+    };
+
+    // Aqui tu pode salvar no localStorage ou enviar pro backend
+    const symptoms = JSON.parse(localStorage.getItem("symptoms") || "[]");
+    symptoms.push(data);
+    localStorage.setItem("symptoms", JSON.stringify(symptoms));
+
+    alert("Sintoma registrado com sucesso!");
+    location.hash = "#/symptomcard"; // volta pra lista
+  });
+</script>
