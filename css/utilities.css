@@ -1,0 +1,55 @@
+.brand-text {
+  font-size: 1.25rem; /* ~20px */
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+
+  background-image: linear-gradient(
+    90deg,
+    var(--primary) 0%,
+    var(--secondary) 50%,
+    var(--accent) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+
+  background-size: 200% auto; /* permite animação */
+  transition: background-position 0.6s ease-in-out;
+}
+
+.icon-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+}
+
+.icon-pill--indigo {
+  background: #eef2ff;
+  color: #4f46e5;
+}
+.icon-pill--emerald {
+  background: #ecfdf5;
+  color: #059669;
+}
+.icon-pill--rose {
+  background: #fff1f2;
+  color: #e11d48;
+}
+.icon-pill--pink {
+  background: #fdf2f8;
+  color: #db2777;
+}
+
+.card [data-actions] {
+  display: flex !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+.card [data-actions] button {
+  display: inline-flex !important;
+}

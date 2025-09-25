@@ -1,0 +1,25 @@
+/* Sidebar colapsada */
+#sidebar.is-collapsed .brand-text,
+#sidebar.is-collapsed .nav-text,
+#sidebar.is-collapsed .section-title {
+  display: none;
+}
+
+#sidebar.is-collapsed .navlink {
+  justify-content: center;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+#sidebar.is-collapsed .navlink i {
+  margin-right: 0;
+}
+
+/* Área principal / container */
+.page-container {
+  min-height: 100vh;
+}
+
+.is-hidden {
+  display: none !important;
+}

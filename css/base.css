@@ -1,0 +1,103 @@
+:root {
+  --background: #fafafa; /* hsl(0 0% 98%) → branco quase gelo */
+  --foreground: #2a2f38; /* hsl(220 15% 20%) → cinza azulado escuro */
+
+  --card: #ffffff; /* hsl(0 0% 100%) → branco puro */
+  --card-foreground: #2a2f38; /* hsl(220 15% 20%) → cinza azulado escuro */
+
+  --popover: #ffffff; /* hsl(0 0% 100%) → branco puro */
+  --popover-foreground: #2a2f38; /* hsl(220 15% 20%) → cinza azulado escuro */
+
+  --primary: #8c12fd; /* hsl(200 100% 45%) → azul ciano forte */
+  --primary-foreground: #ffffff; /* branco */
+  --primary-glow: #33bbff; /* hsl(200 100% 65%) → azul claro vibrante */
+
+  --secondary: #33cc80; /* hsl(150 60% 50%) → verde esmeralda médio */
+  --secondary-foreground: #ffffff; /* branco */
+
+  --accent: #b366d6; /* hsl(280 60% 70%) → lilás/violeta claro */
+  --accent-foreground: #ffffff; /* branco */
+
+  --wellness: #f280a6; /* hsl(330 80% 75%) → rosa chiclete */
+  --wellness-foreground: #662640; /* hsl(330 40% 25%) → vinho amarronzado */
+
+  --muted: #f2f4f7; /* hsl(220 15% 95%) → cinza muito claro */
+  --muted-foreground: #8c99a6; /* hsl(220 10% 55%) → cinza médio azulado */
+
+  --destructive: #e11919; /* hsl(0 84.2% 60.2%) → vermelho vivo */
+  --destructive-foreground: #ffffff; /* branco */
+
+  --border: #d6dae2; /* hsl(220 15% 88%) → cinza claro azulado */
+  --input: #f2f4f7; /* hsl(220 15% 95%) → cinza muito claro */
+  --ring: #0088cc; /* hsl(200 100% 45%) → azul ciano forte */
+
+  --radius: 1rem;
+
+  /* Gradientes */
+  --gradient-aurora: linear-gradient(
+    135deg,
+    #0088cc 0%,
+    #33cc80 50%,
+    #b366d6 100%
+  );
+
+  --gradient-wellness: linear-gradient(
+    45deg,
+    hsl(var(--primary-glow) / 0.1),
+    hsl(var(--wellness) / 0.1)
+  );
+
+  /* Shadows */
+  --shadow-aurora: 0 20px 60px -12px rgba(0, 136, 204, 0.25); /* azul ciano */
+  --shadow-wellness: 0 10px 40px -8px rgba(242, 128, 166, 0.3); /* rosa chiclete */
+  --shadow-soft: 0 4px 20px -4px rgba(42, 47, 56, 0.1); /* cinza escuro */
+
+  /* Transitions */
+  --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* Sidebar tokens */
+  --sidebar-background: #fafafa; /* branco gelo */
+  --sidebar-foreground: #3f3f46; /* cinza carvão */
+  --sidebar-primary: #1a1a1a; /* quase preto */
+  --sidebar-primary-foreground: #fafafa; /* branco gelo */
+  --sidebar-accent: #f5f5f5; /* cinza claro neutro */
+  --sidebar-accent-foreground: #1a1a1a; /* quase preto */
+  --sidebar-border: #e3e6eb; /* cinza bem clarinho */
+  --sidebar-ring: #337dff; /* azul royal vivo */
+
+  --sidebar-w: 16rem;
+  --sidebar-w-collapsed: 4rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--background));
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu,
+    Cantarell, "Helvetica Neue", Arial;
+}
+input,
+select,
+textarea {
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--card));
+  color: hsl(var(--foreground));
+}
+input::placeholder,
+textarea::placeholder {
+  color: hsl(var(--muted-foreground));
+}
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: hsl(var(--ring));
+  box-shadow: 0 0 0 3px hsl(var(--ring) / 0.35);
+}
