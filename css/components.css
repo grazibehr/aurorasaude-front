@@ -344,7 +344,6 @@ input[type="range"]::-moz-range-thumb {
   display: flex;
   align-items: center; /* centraliza vertical */
   justify-content: center; /* centraliza horizontal */
-  background: #f9fafb; /* opcional: fundo clarinho */
 }
 
 .auth-card {
@@ -513,4 +512,103 @@ input[type="range"]::-moz-range-thumb {
 }
 .card {
   overflow: visible;
+}
+
+.bg-app {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Card padrão “aurora” sem dark mode do Tailwind */
+.card-aurora {
+  background: var(--card);
+  color: var(--card-foreground);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border);
+}
+
+/* “Vidrinho” leve (substitui bg-white/70 + backdrop-blur) */
+.card-glass {
+  background: color-mix(in srgb, var(--card) 80%, transparent);
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border);
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.badge-up {
+  background: color-mix(in srgb, var(--secondary) 15%, white);
+  color: #0d6e48;
+}
+.badge-down {
+  background: color-mix(in srgb, var(--destructive) 12%, white);
+  color: #8a1021;
+}
+
+/* Botões neutros */
+.btn-plain {
+  background: var(--muted);
+  color: var(--foreground);
+  border-radius: 0.6rem;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--border);
+  transition: var(--transition-smooth);
+}
+.btn-plain:hover {
+  filter: brightness(0.97);
+}
+
+/* Botão primário pelo seu token */
+.btn-primary {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: 0.6rem;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid transparent;
+  box-shadow: 0 6px 20px -6px color-mix(in srgb, var(--primary) 35%, transparent);
+  transition: var(--transition-smooth);
+}
+.btn-primary:hover {
+  filter: brightness(0.95);
+}
+
+/* Ícone-bolacha */
+.icon-chip {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.9rem;
+  background: color-mix(in srgb, var(--primary) 18%, white);
+  color: var(--primary);
+}
+
+/* Cores pontinhos da lista */
+.dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 999px;
+  display: inline-block;
+  margin-top: 0.25rem;
+}
+.dot-emerald {
+  background: #10b981;
+}
+.dot-indigo {
+  background: #6366f1;
+}
+.dot-amber {
+  background: #f59e0b;
 }

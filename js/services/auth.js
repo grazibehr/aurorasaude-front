@@ -1,8 +1,6 @@
-// js/services/auth.js
 (function () {
   const API = "http://127.0.0.1:5000/auth";
 
-  // chaves no localStorage
   const LS_TOKEN = "auth.token";
   const LS_USER = "auth.user";
 
@@ -12,8 +10,7 @@
 
     if (user) localStorage.setItem(LS_USER, JSON.stringify(user));
     else localStorage.removeItem(LS_USER);
-
-    // avisa o app (header, roteador, etc.)
+    
     document.dispatchEvent(
       new CustomEvent("auth:change", { detail: { token, user } })
     );

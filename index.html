@@ -407,34 +407,144 @@
               </div>
             </header>
 
-            <section class="space-y-4">
-              <div class="flex items-center justify-between">
-                <h3 class="text-xl font-bold text-gray-800">
-                  Sintomas recentes
-                </h3>
-                <a
-                  href="#/analytics"
-                  class="text-sm text-gray-600 font-medium px-4 py-2 rounded-full border border-gray-300 hover:bg-gray-200 transition"
-                >
-                  Ver todas as análises
-                </a>
-              </div>
-              <div class="flex items-center gap-2 text-gray-600 text-sm">
-                <div class="inline-flex bg-gray-100 rounded-full p-1">
-                  <button
-                    id="filter-today"
-                    data-filter="today"
-                    class="px-3 py-1.5 rounded-full text-sm font-medium bg-indigo-600 text-white"
-                  >
-                    Hoje
-                  </button>
+            <section aria-labelledby="insights-title" class="my-6">
+              <div class="card-glass p-5">
+                <header class="flex items-center justify-between gap-3 mb-4">
+                  <div class="flex items-center gap-2">
+                    <span class="icon-chip" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" class="h-5 w-5">
+                        <path
+                          fill="currentColor"
+                          d="M3 13h2v8H3zm4-6h2v14H7zm4 3h2v11h-2zm4-5h2v16h-2zm4 8h2v8h-2z"
+                        />
+                      </svg>
+                    </span>
+                    <h2 id="insights-title" class="text-lg font-semibold">
+                      Insights últimos 30 dias
+                    </h2>
+                  </div>
+
+                  <div class="flex items-center gap-2">
+                    <button class="btn-plain" data-range="7">7d</button>
+                    <button class="btn-primary" data-range="30">30d</button>
+                    <button class="btn-plain" data-range="90">90d</button>
+                  </div>
+                </header>
+
+                <!-- KPIs -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                  <!-- Total -->
+                  <div class="card-aurora p-4">
+                    <p class="text-sm" style="color: var(--muted-foreground)">
+                      Registros
+                    </p>
+                    <div class="mt-1 flex items-baseline gap-2">
+                      <span id="ins-kpi-total" class="text-2xl font-semibold"
+                        >0</span
+                      >
+                      <span id="ins-kpi-total-delta" class="badge badge-up">
+                        <svg
+                          viewBox="0 0 24 24"
+                          class="h-3.5 w-3.5"
+                          fill="currentColor"
+                        >
+                          <path d="M7 14l5-5 5 5z" />
+                        </svg>
+                        +0%
+                      </span>
+                    </div>
+                    <p
+                      class="text-xs mt-1"
+                      style="color: var(--muted-foreground)"
+                    >
+                      vs período anterior
+                    </p>
+                  </div>
+
+                  <!-- Dor média -->
+                  <div class="card-aurora p-4">
+                    <p class="text-sm" style="color: var(--muted-foreground)">
+                      Dor média
+                    </p>
+                    <div class="mt-1 flex items-baseline gap-2">
+                      <span id="ins-kpi-avg" class="text-2xl font-semibold"
+                        >—</span
+                      >
+                      <span
+                        id="ins-kpi-avg-tag"
+                        class="badge"
+                        style="
+                          background: var(--muted);
+                          color: var(--foreground);
+                        "
+                        >estável</span
+                      >
+                    </div>
+                    <p
+                      class="text-xs mt-1"
+                      style="color: var(--muted-foreground)"
+                    >
+                      escala 1–10
+                    </p>
+                  </div>
+
+                  <!-- Top sintoma -->
+                  <div class="card-aurora p-4">
+                    <p class="text-sm" style="color: var(--muted-foreground)">
+                      Mais recorrente
+                    </p>
+                    <div class="mt-1 flex items-baseline gap-2">
+                      <span
+                        id="ins-kpi-top"
+                        class="text-2xl font-semibold truncate max-w-[14ch]"
+                        >—</span
+                      >
+                    </div>
+                    <p
+                      id="ins-kpi-top-count"
+                      class="text-xs mt-1"
+                      style="color: var(--muted-foreground)"
+                    >
+                      — ocorrências
+                    </p>
+                  </div>
                 </div>
 
-                <span
-                  id="user-symptoms-count"
-                  class="ml-auto text-sm text-gray-400"
-                  >0 registros</span
+                <!-- Lista -->
+                <ul class="space-y-2">
+                  <li class="flex items-start gap-3">
+                    <span class="dot dot-emerald" aria-hidden="true"></span>
+                    <p id="ins-1" class="text-sm">
+                      Você registrou <strong>0</strong> sintomas nos últimos 30
+                      dias.
+                    </p>
+                  </li>
+                  <li class="flex items-start gap-3">
+                    <span class="dot dot-indigo" aria-hidden="true"></span>
+                    <p id="ins-2" class="text-sm">
+                      Sua <strong>dor média</strong> está
+                      <strong>estável</strong>.
+                    </p>
+                  </li>
+                  <li class="flex items-start gap-3">
+                    <span class="dot dot-amber" aria-hidden="true"></span>
+                    <p id="ins-3" class="text-sm">
+                      O sintoma mais frequente foi <strong>—</strong>.
+                    </p>
+                  </li>
+                </ul>
+              </div>
+            </section>
+
+            <section class="card-glass space-y-4">
+              <div class="flex items-center justify-between">
+                <a
+                  href="#/analytics"
+                  id="view-all-link"
+                  class="ml-auto text-sm font-medium px-4 py-2 rounded-full transition bg-violet-600 text-white hover:bg-violet-700 focus:ring-2 focus:ring-violet-400 focus:outline-none"
                 >
+                  Ver todos os registros
+                </a>
               </div>
 
               <ul id="user-symptoms-list" class="space-y-4"></ul>
@@ -469,44 +579,47 @@
               </button>
             </article>
 
-            <article class="card p-6">
-              <header class="flex items-center justify-between mb-3">
-                <h3 class="font-semibold text-gray-800 flex items-center gap-2">
-                  <i class="fas fa-heartbeat text-rose-500"></i> Resumo do nível
-                  de dor
-                </h3>
-                <span class="text-xs text-gray-500">últimos 30 dias</span>
-              </header>
-              <div class="h-48 md:h-56">
-                <canvas
-                  id="chartPain"
-                  class="w-full h-full"
-                  aria-label="Distribuição de dor"
-                  role="img"
-                ></canvas>
-              </div>
-              <ul
-                id="legendPain"
-                class="mt-4 text-xs text-gray-600 grid grid-cols-2 gap-1"
-              ></ul>
-            </article>
+            <section aria-labelledby="tips-title" class="my-6">
+              <div class="card-glass p-5">
+                <header class="flex items-center gap-2 mb-4">
+                  <span class="icon-chip" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" class="h-5 w-5">
+                      <path
+                        fill="currentColor"
+                        d="M9 21h6v-1.5H9V21Zm3-19a7.5 7.5 0 0 0-4.75 13.29c.4.35.75.77 1 1.25h7.5c.25-.48.6-.9 1-1.25A7.5 7.5 0 0 0 12 2Z"
+                      />
+                    </svg>
+                  </span>
+                  <h2 id="tips-title" class="text-lg font-semibold">
+                    Dicas para você
+                  </h2>
+                </header>
 
-            <article class="card p-6">
-              <header class="flex items-center justify-between mb-3">
-                <h3 class="font-semibold text-gray-800 flex items-center gap-2">
-                  <i class="fas fa-stethoscope text-indigo-500"></i> Sintomas
-                  recorrentes
-                </h3>
-              </header>
-              <div class="h-52 md:h-60">
-                <canvas
-                  id="chartSymptomTop"
-                  class="w-full h-full"
-                  aria-label="Sintomas recorrentes"
-                  role="img"
-                ></canvas>
+                <ul class="space-y-3">
+                  <li class="flex items-start gap-3">
+                    <span class="dot dot-emerald"></span>
+                    <p class="text-sm">
+                      Continue registrando seus sintomas diariamente — isso
+                      ajuda a ter um histórico completo.
+                    </p>
+                  </li>
+                  <li class="flex items-start gap-3">
+                    <span class="dot dot-amber"></span>
+                    <p class="text-sm">
+                      Se a dor média ficar acima de <strong>7/10</strong> por
+                      mais de uma semana, considere procurar atendimento médico.
+                    </p>
+                  </li>
+                  <li class="flex items-start gap-3">
+                    <span class="dot dot-indigo"></span>
+                    <p class="text-sm">
+                      Hidrate-se e anote fatores externos (sono, alimentação)
+                      para identificar gatilhos.
+                    </p>
+                  </li>
+                </ul>
               </div>
-            </article>
+            </section>
           </aside>
         </div>
       </section>
@@ -718,7 +831,6 @@
     <script src="./js/services/user-symptoms.js" defer></script>
     <script src="./js/hooks/auth.js" defer></script>
     <script src="./js/hooks/symptom-form.js" defer></script>
-    <script src="./js/ui/cards-symptoms.js" defer></script>
     <script src="./js/hooks/home.js" defer></script>
     <script src="./js/routes/index.js" defer></script>
     <script src="./js/sidebar.js" defer></script>
@@ -727,6 +839,6 @@
       src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"
       defer
     ></script>
-    <script src="./js/hooks/home-charts.js" defer></script>
+    <script src="./js/hooks/home-insights.js" defer></script>
   </body>
 </html>

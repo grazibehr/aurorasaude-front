@@ -9,11 +9,10 @@
     return { txt: "Intensa", cls: "text-rose-600" };
   }
 
-  // --- Data: sempre retorna ARRAY normalizado [{id, name}]
   async function getSymptomTypes() {
-    if (window.Symptoms?.listTypes) {
+    if (window.Sintomas?.listTypes) {
       try {
-        const raw = await window.Symptoms.listTypes();
+        const raw = await window.Sintomas.listTypes();
         const arr = Array.isArray(raw)
           ? raw
           : Array.isArray(raw?.data)
@@ -32,14 +31,12 @@
           }));
         }
       } catch (e) {
-        console.warn("Symptoms.listTypes() falhou:", e);
+        console.warn("Sintomas.listTypes() falhou:", e);
       }
     }
-    // fallback seguro (não quebra UI)
     return [];
   }
 
-  // --- Popula o select hidden + lista visual
   async function loadSymptomOptions(hiddenSelect, listEl, outroOptId, closeCb) {
     hiddenSelect.innerHTML =
       '<option value="" disabled selected>Carregando…</option>';

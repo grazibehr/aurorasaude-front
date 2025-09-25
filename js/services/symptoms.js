@@ -1,30 +1,28 @@
 (function () {
-  const API = "http://127.0.0.1:5000/symptoms";
+  const API = "http://127.0.0.1:5000/sintomas";
 
-  async function fetchSymptoms() {
-    const resp = await fetch(`${API}/`, { credentials: "omit" });
-    if (!resp.ok) throw new Error("Falha ao carregar sintomas");
+  async function fetchSintomas() {
+    // rota correta: /sintomas/lista
+    const resp = await fetch(`${API}/lista`, { credentials: "omit" });
+    if (!resp.ok) {
+      const txt = await resp.text().catch(() => "");
+      throw new Error(`Falha ao carregar sintomas (${resp.status}) ${txt}`);
+    }
+
     const raw = await resp.json();
 
-    // normaliza formatos possíveis
-    const arr = Array.isArray(raw)
-      ? raw
-      : Array.isArray(raw?.root)
-      ? raw.root
-      : Array.isArray(raw?.data)
-      ? raw.data
-      : [];
+    // o schema atual devolve { items: [...] }
+    const arr = Array.isArray(raw?.items) ? raw.items : [];
 
-    // garante shape [{id, name}]
+    // normalização -> { id, name }
     return arr.map((x) => ({
       id: x.id ?? x.value ?? x.slug ?? String(x),
-      name: x.name ?? x.type ?? x.label ?? String(x),
+      name: x.nome ?? x.name ?? x.tipo ?? x.type ?? x.label ?? String(x),
     }));
   }
 
-  // expõe no global com o nome que teu código espera
-  window.Symptoms = {
-    ...(window.Symptoms || {}),
-    listTypes: fetchSymptoms,
+  window.Sintomas = {
+    ...(window.Sintomas || {}),
+    listTypes: fetchSintomas,
   };
 })();

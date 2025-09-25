@@ -22,9 +22,7 @@ document.addEventListener("auth:change", () => {
   }
 });
 
-/* ===== datas ===== */
 function parseDateSafe(dateStr) {
-  // "YYYY-MM-DD" => data local, sem deslocar fuso
   const s = String(dateStr || "");
   const onlyDate = /^\d{4}-\d{2}-\d{2}$/.test(s);
   if (onlyDate) {
@@ -51,119 +49,202 @@ function formatDateTimeBR(dateStr) {
     : null;
   return { data, hora, datetimeAttr: String(dateStr || "") };
 }
-
-/* ===== render recente (ordenado) ===== */
 async function renderRecent() {
   const ul = document.querySelector("#user-symptoms-list");
   const countEl = document.querySelector("#user-symptoms-count");
   if (!ul) return;
 
-  ul.innerHTML = `<li class="text-sm text-gray-500">Carregando…</li>`;
+  // skeletons
+  ul.innerHTML = `
+    <li class="rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
+      <div class="flex items-start gap-3">
+        <span class="h-9 w-9 rounded-full skel"></span>
+        <div class="flex-1 space-y-2">
+          <div class="h-4 w-40 rounded skel"></div>
+          <div class="h-3 w-24 rounded skel"></div>
+          <div class="h-3 w-56 rounded skel"></div>
+        </div>
+      </div>
+    </li>
+  `.repeat(3);
+
+  const lvlClass = (n) => `chip l${Math.min(10, Math.max(1, Number(n || 0)))}`;
+  const iconFor = (name) => {
+    const s = (name || "").toLowerCase();
+    if (s.includes("cefaleia") || s.includes("cabeça"))
+      return { i: "🧠", bg: "#EEF2FF", fg: "#4F46E5" };
+    if (s.includes("enjoo") || s.includes("náusea"))
+      return { i: "🤢", bg: "#ECFEFF", fg: "#0891B2" };
+    if (s.includes("calafrios"))
+      return { i: "🧊", bg: "#F0FDFA", fg: "#0D9488" };
+    if (s.includes("fadiga")) return { i: "😮‍💨", bg: "#FFF7ED", fg: "#EA580C" };
+    if (s.includes("tosse")) return { i: "🤧", bg: "#F1F5F9", fg: "#334155" };
+    if (s.includes("muscular"))
+      return { i: "💪", bg: "#FEF2F2", fg: "#DC2626" };
+    return { i: "🩺", bg: "#F8FAFC", fg: "#475569" };
+  };
+  const fmt = (iso) => {
+    try {
+      return new Date(iso).toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      });
+    } catch {
+      return String(iso || "—");
+    }
+  };
 
   try {
     const svc = window.UserSymptoms || {};
-    let items = [];
-    let total = 0;
-
+    let items = [],
+      total = 0;
     if (typeof svc.listWithMeta === "function") {
-      const res = await svc.listWithMeta({ limit: 5 });
-      items = Array.isArray(res?.items) ? res.items : [];
-      total = Number(res?.total ?? items.length);
-    } else {
-      const arr = await svc.list(); // fallback
-      items = Array.isArray(arr) ? arr : [];
+      const PAGE = 100;
+      let page = 1;
+      let all = [];
+      for (;;) {
+        const r = await svc.listWithMeta({ page, page_size: PAGE });
+        const chunk = Array.isArray(r?.items) ? r.items : [];
+        all.push(...chunk);
+        total = Number(r?.total ?? all.length);
+        if (chunk.length < PAGE || !r?.next_page) break;
+        page++;
+      }
+      items = all;
+    } else if (typeof svc.list === "function") {
+      const r = await svc.list();
+      items = Array.isArray(r) ? r : r?.items || [];
       total = items.length;
     }
 
-    // ordena por data desc
-    items.sort((a, b) => {
-      const A = parseDateSafe(a?.date).date.getTime();
-      const B = parseDateSafe(b?.date).date.getTime();
-      return B - A;
-    });
+    // ---- ORDENA e LIMITA (mostra 4) ----
+    items.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    items = items.slice(0, 5);
+    const VISIBLE = 3;
+    const visibleItems = items.slice(0, VISIBLE);
+
+    // ---- CTA "Ver todos" dinâmico ----
+    const viewAll = document.getElementById("view-all-link");
+    if (viewAll) {
+      if (items.length > VISIBLE) {
+        // mostra o total, dá contexto
+        viewAll.classList.remove("hidden");
+        viewAll.textContent = `Ver todos os registros (${items.length})`;
+        viewAll.setAttribute(
+          "aria-label",
+          `Ver todos os ${items.length} registros`
+        );
+        // se quiser já levar com um filtro/aba específica, mantenha o href atual (#/analytics)
+      } else {
+        // sem “todos” a mostrar
+        viewAll.classList.add("hidden");
+      }
+    }
 
     ul.innerHTML = "";
-    for (const s of items) {
-      const { data, hora, datetimeAttr } = formatDateTimeBR(s.date);
+    if (visibleItems.length === 0) {
+      ul.innerHTML = `
+    <li class="p-4 rounded-xl border border-dashed border-gray-300 text-gray-500 text-sm flex items-center gap-3 bg-white">
+      <span class="text-xl">🗒️</span>
+      <span>Nenhum registro por enquanto.</span>
+    </li>`;
+    } else {
+      for (const s of visibleItems) {
+        const name =
+          s.symptom_name ||
+          s.label ||
+          s.symptom ||
+          s.type ||
+          `#${s.symptom_id}` ||
+          "Sintoma";
+        const lvl = Number(s.pain_level ?? s.intensity ?? s.level ?? 0);
 
-      ul.innerHTML += `
-        <li>
-          <article class="card p-5 shadow-sm hover:shadow-lg transition-all duration-300 relative overflow-visible" data-id="${
-            s.id
-          }">
-            <header class="flex items-start justify-between gap-4">
-              <div class="flex items-start gap-4">
-                <span class="text-3xl leading-none text-indigo-500">
-                  <i class="fas fa-heartbeat" aria-hidden="true"></i>
-                </span>
-                <div>
-                  <h4 class="font-semibold text-lg text-gray-800">
-                    ${s.symptom_name ?? "Sintoma"}
-                  </h4>
-                  <p class="mt-1">
-                    <span class="badge badge--rose">
-                      ${s.pain_level ?? 0}/10
-                    </span>
-                  </p>
-                  <p class="flex items-center text-sm text-gray-500 mt-2">
-                    <i class="fas ${
-                      hora ? "fa-clock" : "fa-calendar"
-                    } mr-2" aria-hidden="true"></i>
-                    <time datetime="${datetimeAttr}">
-                      ${hora ? `${data} · ${hora}` : `${data}`}
-                    </time>
-                  </p>
-                </div>
+        // helpers que você já tem (icon/cores/data) — reaproveite os teus:
+        const { data, hora, datetimeAttr } = formatDateTimeBR(s.date);
+        const {
+          i: icon,
+          bg,
+          fg,
+        } = (function iconFor(n) {
+          const t = (n || "").toLowerCase();
+          if (t.includes("cefaleia") || t.includes("cabeça"))
+            return { i: "🧠", bg: "#EEF2FF", fg: "#4F46E5" };
+          if (t.includes("enjoo") || t.includes("náusea"))
+            return { i: "🤢", bg: "#ECFEFF", fg: "#0891B2" };
+          if (t.includes("calafrios"))
+            return { i: "🧊", bg: "#F0FDFA", fg: "#0D9488" };
+          if (t.includes("fadiga"))
+            return { i: "😮‍💨", bg: "#FFF7ED", fg: "#EA580C" };
+          if (t.includes("tosse"))
+            return { i: "🤧", bg: "#F1F5F9", fg: "#334155" };
+          if (t.includes("muscular"))
+            return { i: "💪", bg: "#FEF2F2", fg: "#DC2626" };
+          return { i: "🩺", bg: "#F8FAFC", fg: "#475569" };
+        })(name);
+
+        const lvlClass = (n) => {
+          n = Math.min(10, Math.max(1, Number(n || 0)));
+          if (n >= 9) return "bg-red-600 text-white";
+          if (n >= 7) return "bg-orange-500 text-white";
+          if (n >= 5) return "bg-amber-400 text-black";
+          if (n >= 3) return "bg-emerald-500 text-white";
+          return "bg-slate-300 text-slate-800";
+        };
+
+        ul.innerHTML += `
+      <li>
+        <article class="rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm hover:shadow-md transition-all" data-id="${
+          s.id
+        }">
+          <header class="flex items-start gap-3">
+            <span class="h-9 w-9 shrink-0 rounded-full flex items-center justify-center text-base" style="background:${bg};color:${fg}">${icon}</span>
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2">
+                <h4 class="font-semibold text-gray-800 truncate">${name}</h4>
+                <span class="px-2 py-0.5 rounded-full text-[11px] ${lvlClass(
+                  lvl
+                )}">dor ${lvl || 0}/10</span>
+                <time class="ml-auto text-xs text-gray-500 whitespace-nowrap" datetime="${datetimeAttr}">
+                  ${hora ? `${data} · ${hora}` : `${data}`}
+                </time>
               </div>
-
-              <div class="sym-actions relative shrink-0">
-                <button
-                  class="h-10 w-10 inline-flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100"
-                  data-menu-btn
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                  aria-controls="sym-menu-${s.id}"
-                  title="Mais ações"
-                >
-                  <!-- FA (se carregar) + fallback ⋮ -->
-                  <i class="fa-solid fa-ellipsis-vertical fas fa-ellipsis-v" aria-hidden="true"></i>
-                  <span class="sr-only">Mais ações</span>
+              <p class="text-sm text-gray-600 mt-1 line-clamp-2">${
+                s.notes || "—"
+              }</p>
+            </div>
+            <div class="relative">
+              <button class="h-8 w-8 rounded-lg text-gray-500 hover:bg-gray-100 flex items-center justify-center"
+                      data-menu-btn aria-haspopup="true" aria-expanded="false" aria-controls="sym-menu-${
+                        s.id
+                      }" title="Mais ações">
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+              </button>
+              <div id="sym-menu-${
+                s.id
+              }" class="sym-menu hidden absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-xl shadow-lg z-50 py-1" role="menu">
+                <button class="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 text-red-600" data-act="delete">
+                  <i class="fas fa-trash"></i> Excluir
                 </button>
-
-                <div
-                  id="sym-menu-${s.id}"
-                  class="sym-menu hidden absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-xl shadow-lg z-50 py-1"
-                  role="menu"
-                >
-                  <button class="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 text-red-600"
-                          data-act="delete" role="menuitem">
-                    <i class="fas fa-trash" aria-hidden="true"></i>
-                    Excluir
-                  </button>
-                </div>
               </div>
-              <!-- /AÇÕES -->
-            </header>
-          </article>
-        </li>`;
+            </div>
+          </header>
+        </article>
+      </li>`;
+      }
     }
 
-    if (items.length === 0) {
-      ul.innerHTML = `<li class="text-sm text-gray-500">Nenhum registro por enquanto.</li>`;
-    }
-
-    if (countEl) {
-      countEl.textContent = `${total} registro${total === 1 ? "" : "s"}`;
-    }
+    // contador total (não só os visíveis)
+    if (countEl)
+      countEl.textContent = `${items.length} registro${
+        items.length === 1 ? "" : "s"
+      }`;
   } catch (e) {
     console.error(e);
     ul.innerHTML = `<li class="text-sm text-rose-600">Erro ao carregar registros.</li>`;
   }
 }
 
-/* ===== re-registra o hook do /home mantendo o anterior ===== */
 window.hooks = window.hooks || {};
 const prevHome = window.hooks["/home"];
 window.hooks["/home"] = function () {
@@ -224,7 +305,7 @@ if (!window.__bindSymMenus) {
 
         try {
           await svc.remove(id);
-          (card.closest("li") || card).remove();
+          await renderRecent();
         } catch (err) {
           console.error(err);
           alert("Falha ao excluir. Tente novamente.");

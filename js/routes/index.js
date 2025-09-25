@@ -7,14 +7,11 @@ const ROUTES = {
   "/": "home",
   "/home": "home",
   "/symptom": "symptom",
-  "/perfil": "perfil",
-  "/ficha-saude": "ficha-saude",
   "/analytics": "analytics",
-  "/onboarding": "onboarding",
   "/auth": "auth",
 };
 
-const PUBLIC_ROUTES = new Set(["/auth", "/onboarding"]);
+const PUBLIC_ROUTES = new Set(["/auth"]);
 
 const setIntended = (route) => sessionStorage.setItem("INTENDED_ROUTE", route);
 const popIntended = () => {
@@ -24,8 +21,8 @@ const popIntended = () => {
 };
 
 const getPath = () => {
-  const raw = (location.hash || "#/").slice(1);
-  return raw.replace(/\/+$/, "") || "/";
+  const raw = (location.hash || "#/auth").slice(1);
+  return raw.replace(/\/+$/, "") || "/auth";
 };
 
 const isAuth = () => !!window.Auth?.getToken?.();
@@ -130,7 +127,6 @@ function updateActiveLink(currentPath) {
   }
 }
 
-// mantém a API original mas com active link + toggles
 const _origRender = render;
 render = function (path = getPath()) {
   _origRender(path);
@@ -138,28 +134,27 @@ render = function (path = getPath()) {
   toggleSidebar(path);
 };
 
-// estado inicial UI
+if (!location.hash) {
+  location.replace("#/auth");
+}
+
 const startPath = getPath();
 updateActiveLink(startPath);
 toggleSidebar(startPath);
 
-// Reagir a mudanças de hash
 window.addEventListener("hashchange", () => {
   const p = getPath();
   updateActiveLink(p);
   render(p);
 });
 
-// Reagir a login/logout/expiração se teu client disparar
 document.addEventListener("auth:change", () => {
   const p = getPath();
-  // Se deslogou estando numa rota privada, empurra pro /auth
   if (!PUBLIC_ROUTES.has(p) && !isAuth()) {
     setIntended(p);
     location.hash = "#/auth";
     return;
   }
-  // Se logou estando no /auth, manda pra intended ou home
   if (p === "/auth" && isAuth()) {
     gotoIntendedOrHome();
     return;
@@ -167,8 +162,6 @@ document.addEventListener("auth:change", () => {
   render(p);
 });
 
-// render inicial
 render();
 
-// expõe utilitários
 window.Router = { ROUTES, getPath, render };
