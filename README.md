@@ -17,6 +17,8 @@ O sistema **Aurora Saúde** tem como finalidade auxiliar no **registro e monitor
 - Histórico exibido em formato de cards.
 
 - Campo de observações para contexto clínico.
+  
+- Geração de insights com identificação de padrões de sintomas (ex.: dor aumentando ou diminuindo, recorrência de sintomas).
 
 ---
 
