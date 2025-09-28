@@ -1,9 +1,7 @@
-// js/routes/index.js
+const porId = (id) => document.getElementById(id);
+const clonar = (id) => document.importNode(porId(id).content, true);
 
-const byId = (id) => document.getElementById(id);
-const clone = (id) => document.importNode(byId(id).content, true);
-
-const ROUTES = {
+const ROTAS = {
   "/": "home",
   "/home": "home",
   "/symptom": "symptom",
@@ -11,157 +9,162 @@ const ROUTES = {
   "/auth": "auth",
 };
 
-const PUBLIC_ROUTES = new Set(["/auth"]);
+const ROTAS_PUBLICAS = new Set(["/auth"]);
 
-const setIntended = (route) => sessionStorage.setItem("INTENDED_ROUTE", route);
-const popIntended = () => {
-  const r = sessionStorage.getItem("INTENDED_ROUTE");
-  sessionStorage.removeItem("INTENDED_ROUTE");
+const definirRotaPretendida = (rota) =>
+  sessionStorage.setItem("ROTA_PRETENDIDA", rota);
+
+const consumirRotaPretendida = () => {
+  const r = sessionStorage.getItem("ROTA_PRETENDIDA");
+  sessionStorage.removeItem("ROTA_PRETENDIDA");
   return r;
 };
 
-const getPath = () => {
-  const raw = (location.hash || "#/auth").slice(1);
-  return raw.replace(/\/+$/, "") || "/auth";
+const obterRotaAtual = () => {
+  const bruto = (location.hash || "#/auth").slice(1);
+  return bruto.replace(/\/+$/, "") || "/auth";
 };
 
-const isAuth = () => !!window.Auth?.getToken?.();
+const estaAutenticada = () => !!window.Auth?.obterToken?.();
 
-function toggleSidebar(path) {
-  const sb = byId("sidebar");
+function alternarSidebar(rota) {
+  const sb = porId("sidebar");
   if (!sb) return;
-  const hide = path === "/auth" || path === "/onboarding";
-  sb.style.transform = hide ? "translateX(-100%)" : "translateX(0)";
+  const ocultar = rota === "/auth";
+  sb.style.transform = ocultar ? "translateX(-100%)" : "translateX(0)";
 }
 
-function focusMain() {
-  const app = byId("app");
+function aplicarClasseDaRota(rota = obterRotaAtual()) {
+  const ehAuth = rota === "/auth" || !estaAutenticada();
+  document.body.classList.toggle("route-auth", ehAuth);
+  document.body.classList.toggle("route-app", !ehAuth);
+}
+
+function focarMain() {
+  const app = porId("app");
   if (!app) return;
   app.setAttribute("tabindex", "-1");
   app.focus({ preventScroll: true });
   app.removeAttribute("tabindex");
 }
 
-function gotoIntendedOrHome() {
-  const intended = popIntended();
-  location.hash = `#${intended || "/home"}`;
+function irParaPretendidaOuHome() {
+  const pretendida = consumirRotaPretendida();
+  location.hash = `#${pretendida || "/home"}`;
 }
 
-function render(path = getPath()) {
-  const app = byId("app");
+function renderizar(rota = obterRotaAtual()) {
+  const app = porId("app");
   if (!app) return;
 
-  const cleanPath = path.replace(/\/+$/, "") || "/";
-  const tplId = ROUTES[cleanPath];
+  const caminhoLimpo = rota.replace(/\/+$/, "") || "/";
+  const tplId = ROTAS[caminhoLimpo];
 
-  // Guard: exige auth em rotas privadas
-  const needsAuth = !PUBLIC_ROUTES.has(cleanPath);
-  if (needsAuth && !isAuth()) {
-    setIntended(cleanPath);
+  const precisaAuth = !ROTAS_PUBLICAS.has(caminhoLimpo);
+  if (precisaAuth && !estaAutenticada()) {
+    definirRotaPretendida(caminhoLimpo);
     location.hash = "#/auth";
     return;
   }
 
-  // Se já está logada e caiu no /auth, manda pra intended ou home
-  if (cleanPath === "/auth" && isAuth()) {
-    gotoIntendedOrHome();
+  if (caminhoLimpo === "/auth" && estaAutenticada()) {
+    irParaPretendidaOuHome();
     return;
   }
 
   app.innerHTML = "";
 
-  // Render 404 se rota não existe
-  if (!tplId) {
-    app.innerHTML = `
-      <section class="p-8 text-center">
-        <h2 class="text-2xl font-bold">404</h2>
-        <p class="text-slate-600 mt-2">Página não encontrada</p>
-      </section>`;
-    focusMain();
-    return;
-  }
-
-  const tpl = byId(tplId);
+  const tpl = porId(tplId);
   if (!tpl) {
     app.innerHTML = `
       <section class="p-8 text-center">
         <h2 class="text-2xl font-bold">Erro</h2>
         <p class="text-slate-600 mt-2">Template "${tplId}" não encontrado.</p>
       </section>`;
-    focusMain();
+    focarMain();
     return;
   }
 
-  app.appendChild(clone(tplId));
+  app.appendChild(clonar(tplId));
 
-  // pós-render: inicializações específicas da tela
   requestAnimationFrame(() => {
     try {
-      if (tplId === "home") window.HomeCharts?.init?.();
-      if (tplId === "auth") window.AuthUI?.init?.();
-      if (tplId === "onboarding") window.Onboarding?.init?.();
-      window.hooks?.[path]?.();
+      if (tplId === "home") {
+        window.HomeInsights?.invalidate?.();
+        window.HomeInsights?.init?.();
+      }
+      if (tplId === "auth") {
+        window.AuthUI?.iniciarAuthUI?.();
+      }
+
+      window.hooks?.[tplId]?.();
+
+      if (window.lucide?.createIcons) lucide.createIcons();
     } catch (e) {
       console.warn("Erro ao inicializar tela:", e);
     }
-    focusMain();
+    focarMain();
   });
 }
 
-function updateActiveLink(currentPath) {
-  const route = currentPath.replace(/\/+$/, "") || "/";
+function atualizarLinkAtivo(caminhoAtual) {
+  const rota = caminhoAtual.replace(/\/+$/, "") || "/";
   const links = document.querySelectorAll("#sideNav a");
   links.forEach((link) => {
     link.classList.remove("navlink--active");
     link.removeAttribute("aria-current");
   });
-  let current = document.querySelector(`#sideNav a[data-route="${route}"]`);
-  if (!current) {
-    current = Array.from(links).find(
-      (a) => a.getAttribute("href") === `#${route}`
+  let atual = document.querySelector(`#sideNav a[data-route="${rota}"]`);
+  if (!atual) {
+    atual = Array.from(links).find(
+      (a) => a.getAttribute("href") === `#${rota}`
     );
   }
-  if (current) {
-    current.classList.add("navlink--active");
-    current.setAttribute("aria-current", "page");
+  if (atual) {
+    atual.classList.add("navlink--active");
+    atual.setAttribute("aria-current", "page");
   }
 }
 
-const _origRender = render;
-render = function (path = getPath()) {
-  _origRender(path);
-  updateActiveLink(path);
-  toggleSidebar(path);
+const _renderizarOriginal = renderizar;
+renderizar = function (rota = obterRotaAtual()) {
+  aplicarClasseDaRota(rota);
+  _renderizarOriginal(rota);
+  atualizarLinkAtivo(rota);
+  alternarSidebar(rota);
 };
 
 if (!location.hash) {
   location.replace("#/auth");
 }
 
-const startPath = getPath();
-updateActiveLink(startPath);
-toggleSidebar(startPath);
+const rotaInicial = obterRotaAtual();
+aplicarClasseDaRota(rotaInicial);
+atualizarLinkAtivo(rotaInicial);
+alternarSidebar(rotaInicial);
 
 window.addEventListener("hashchange", () => {
-  const p = getPath();
-  updateActiveLink(p);
-  render(p);
+  const r = obterRotaAtual();
+  aplicarClasseDaRota(r);
+  atualizarLinkAtivo(r);
+  renderizar(r);
 });
 
 document.addEventListener("auth:change", () => {
-  const p = getPath();
-  if (!PUBLIC_ROUTES.has(p) && !isAuth()) {
-    setIntended(p);
+  const r = obterRotaAtual();
+  if (!ROTAS_PUBLICAS.has(r) && !estaAutenticada()) {
+    definirRotaPretendida(r);
     location.hash = "#/auth";
     return;
   }
-  if (p === "/auth" && isAuth()) {
-    gotoIntendedOrHome();
+  if (r === "/auth" && estaAutenticada()) {
+    irParaPretendidaOuHome();
     return;
   }
-  render(p);
+  aplicarClasseDaRota(r);
+  renderizar(r);
 });
 
-render();
+renderizar();
 
-window.Router = { ROUTES, getPath, render };
+window.Router = { ROTAS, obterRotaAtual, renderizar };

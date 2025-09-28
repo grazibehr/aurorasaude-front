@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" href="assets/icons/logo.svg" type="image/x-icon" />
+    <link rel="icon" href="assets/icons/logo1.svg" type="image/svg+xml" />
     <title>Aurora Saúde</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -11,134 +11,138 @@
     <link rel="stylesheet" href="./css/base.css" />
     <link rel="stylesheet" href="./css/layout.css" />
     <link rel="stylesheet" href="./css/components.css" />
-    <link rel="stylesheet" href="./css/utilities.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   </head>
 
-  <body class="bg-gray-100 antialiased text-gray-800">
+  <body>
     <a
       href="#home"
       class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[9999] focus:bg-white focus:text-slate-900 focus:px-3 focus:py-2 focus:rounded-md focus:shadow"
     >
       Ir para o conteúdo principal
     </a>
-
-    <aside
-      id="sidebar"
-      class="fixed inset-y-0 left-0 z-40 w-64 md:translate-x-0 bg-white shadow-xl transition-[transform,width] duration-300 flex flex-col"
-    >
-      <div
-        class="h-16 flex items-center justify-between px-5 border-b border-gray-100"
+    <div id="layout">
+      <aside
+        id="sidebar"
+        class="sidebar bg-white p-6 flex flex-col justify-between border-r border-gray-200 lg:sticky lg:top-0 lg:h-screen"
       >
-        <div class="flex items-center gap-3">
-          <img
-            src="./assets/icons/logo.svg"
-            alt="Aurora Saúde"
-            class="h-10 w-10 shrink-0"
-          />
-          <h1 class="brand-text">Aurora Saúde</h1>
+        <div class="h-16 flex items-center justify-between px-5">
+          <div class="flex items-center mb-10 mt-2">
+            <i data-lucide="heart-pulse" class="sidebar-icon w-8 h-8"></i>
+            <span class="text-xl font-bold ml-2 text-gray-800"
+              >Aurora Saúde</span
+            >
+          </div>
         </div>
-        <button
-          id="sideCollapse"
-          class="hidden md:inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 text-slate-600"
+
+        <nav class="flex-1 overflow-y-auto px-4 py-6">
+          <ul class="space-y-2" id="sideNav">
+            <li>
+              <a
+                href="#/home"
+                data-route="/home"
+                class="navlink group flex items-center gap-3 rounded-lg px-4 py-2 text-gray-700 transition-colors hover:bg-gray-100 hover:text-blue-600"
+              >
+                <i data-lucide="home" class="w-5 h-5 mr-3"></i>
+                <span class="nav-text font-medium">Início</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="#/symptom"
+                data-route="/symptom"
+                class="navlink group flex items-center gap-3 rounded-lg px-4 py-2 text-gray-700 transition-colors hover:bg-gray-100 hover:text-blue-600"
+              >
+                <i data-lucide="thermometer" class="w-5 h-5 mr-3"></i>
+                <span class="nav-text font-medium">Sintomas</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="#/analytics"
+                data-route="/analytics"
+                class="navlink group flex items-center gap-3 rounded-lg px-4 py-2 text-gray-700 transition-colors hover:bg-gray-100 hover:text-blue-600"
+              >
+                <i data-lucide="history" class="w-5 h-5 mr-3"></i>
+                <span class="nav-text font-medium">Histórico</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <div
+          id="user-card"
+          class="flex items-center p-3 mb-4 hover:bg-gray-100 transition border-t cursor-pointer"
         >
-          <i class="fas fa-bars"></i>
-        </button>
-      </div>
+          <div
+            class="w-10 h-10 mr-3 rounded-full grid place-items-center font-semibold uppercase text-white bg-[#9333EA] ring-2 ring-[#9333EA] ring-offset-2 ring-white"
+          >
+            <span id="user-initials">?</span>
+          </div>
+          <div>
+            <p id="user-name" class="font-semibold text-gray-800">—</p>
+            <p id="user-email" class="text-xs text-gray-500">—</p>
+          </div>
+        </div>
+        <div class="px-4 py-6">
+          <h3
+            class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2"
+          >
+            Configurações & Ajuda
+          </h3>
+          <ul class="space-y-2">
+            <li>
+              <a
+                href="#/settings"
+                data-route="/settings"
+                class="navlink group flex items-center gap-3 rounded-lg px-4 py-2 text-gray-700 transition-colors hover:bg-gray-100 hover:text-blue-600"
+              >
+                <i data-lucide="settings" class="w-5 h-5 mr-3"></i>
+                <span class="nav-text font-medium">Preferências</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="#/about"
+                data-route="/about"
+                class="navlink group flex items-center gap-3 rounded-lg px-4 py-2 text-gray-700 transition-colors hover:bg-gray-100 hover:text-blue-600"
+              >
+                <i data-lucide="info" class="w-5 h-5 mr-3"></i>
+                <span class="nav-text font-medium">Sobre</span>
+              </a>
+            </li>
+            <hr class="border-t border-gray-200 my-4" />
+            <li>
+              <button
+                onclick="window.Auth.sair()"
+                class="navlink group w-full flex items-center gap-3 rounded-lg px-4 py-2 text-red-500 transition-colors hover:bg-red-50 hover:text-red-600"
+              >
+                <i data-lucide="log-out" class="w-5 h-5 mr-3"></i>
+                <span class="nav-text font-medium">Sair</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </aside>
 
-      <nav class="flex-1 overflow-y-auto px-4 py-6">
-        <ul class="space-y-2" id="sideNav">
-          <li>
-            <a
-              href="#/home"
-              data-route="/home"
-              class="navlink group flex items-center gap-3 rounded-lg px-4 py-2 text-gray-700 transition-colors hover:bg-gray-100 hover:text-blue-600"
-            >
-              <i
-                class="fas fa-home w-5 text-lg group-hover:text-blue-600"
-                aria-hidden="true"
-              ></i>
-              <span class="nav-text font-medium">Início</span>
-            </a>
-          </li>
-          <li>
-            <a
-              href="#/symptom"
-              data-route="/symptom"
-              class="navlink group flex items-center gap-3 rounded-lg px-4 py-2 text-gray-700 transition-colors hover:bg-gray-100 hover:text-blue-600"
-            >
-              <i class="fas fa-plus w-5 text-lg group-hover:text-blue-600"></i>
-              <span class="nav-text font-medium">Sintomas</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
+      <main id="app" role="main" aria-live="polite" class="md:ml-0"></main>
+    </div>
 
-      <div class="border-t border-gray-200 px-4 py-6">
-        <p class="section-title mb-2 sidebar-label">Configurações & Ajuda</p>
-        <ul class="space-y-2">
-          <li>
-            <a
-              href="#/settings"
-              data-route="/settings"
-              class="navlink group flex items-center gap-3 rounded-lg px-4 py-2 text-gray-700 transition-colors hover:bg-gray-100 hover:text-blue-600"
-            >
-              <i class="fas fa-gear w-5 text-lg group-hover:text-blue-600"></i>
-              <span class="nav-text font-medium">Preferências</span>
-            </a>
-          </li>
-          <li>
-            <a
-              href="#/about"
-              data-route="/about"
-              class="navlink group flex items-center gap-3 rounded-lg px-4 py-2 text-gray-700 transition-colors hover:bg-gray-100 hover:text-blue-600"
-            >
-              <i
-                class="fas fa-circle-info w-5 text-lg group-hover:text-blue-600"
-              ></i>
-              <span class="nav-text font-medium">Sobre</span>
-            </a>
-          </li>
-          <li>
-            <button
-              onclick="window.Auth.logout()"
-              class="navlink group w-full flex items-center gap-3 rounded-lg px-4 py-2 text-red-500 transition-colors hover:bg-red-50 hover:text-red-600"
-            >
-              <i
-                class="fas fa-right-from-bracket w-5 text-lg group-hover:text-red-600"
-              ></i>
-              <span class="nav-text font-medium">Sair</span>
-            </button>
-          </li>
-        </ul>
-      </div>
-    </aside>
-
-    <main
-      id="app"
-      class="transition-all duration-300 bg-gray p-6"
-      role="main"
-      aria-live="polite"
-    ></main>
     <template id="auth">
       <div class="auth-page">
         <section class="auth-card space-y-6" aria-labelledby="auth-title">
           <header class="text-center">
             <div class="auth-icon">
-              <img
-                src="./assets/icons/logo.svg"
-                alt="Aurora Saúde"
-                class="h-14 w-17 shrink-0"
-              />
-              <h1 class="brand-text text-brand-gradient">Aurora Saúde</h1>
+              <i data-lucide="heart-pulse" class="w-10 h-10 mr-3"></i>
+              <h1 class="text-brand-gradient">Aurora Saúde</h1>
             </div>
             <h2 id="auth-title" class="text-2xl font-bold text-slate-900">
               Bem-vindo(a)
@@ -148,9 +152,8 @@
             </p>
           </header>
 
-          <!-- Tabs -->
           <div
-            class="grid grid-cols-2 rounded-xl overflow-hidden border border-gray-300"
+            class="grid grid-cols-2 rounded-xl p-1 bg-gray-100"
             role="tablist"
             aria-label="Autenticação"
           >
@@ -177,8 +180,6 @@
               Cadastrar
             </button>
           </div>
-
-          <!-- Alert inline -->
           <div
             id="authAlert"
             class="hidden text-sm rounded-lg p-3 transition-all duration-300"
@@ -186,7 +187,6 @@
             aria-live="polite"
           ></div>
 
-          <!-- Login -->
           <form
             id="authFormLogin"
             class="space-y-4"
@@ -195,12 +195,13 @@
             aria-describedby="loginHelp"
             aria-hidden="false"
             tabindex="0"
+            novalidate
           >
             <p id="loginHelp" class="sr-only">Formulário de login</p>
 
             <div>
               <label
-                class="block text-sm font-medium mb-1"
+                class="block text-sm font-medium mb-1 text-gray-700"
                 for="authLoginEmail"
               >
                 E-mail
@@ -221,7 +222,10 @@
             </div>
 
             <div>
-              <label class="block text-sm font-medium mb-1" for="authLoginPass">
+              <label
+                class="block text-sm font-medium mb-1 text-gray-700"
+                for="authLoginPass"
+              >
                 Senha
               </label>
               <div class="relative">
@@ -237,12 +241,14 @@
                 />
                 <button
                   type="button"
-                  data-pass-target="#authLoginPass"
                   class="pass-toggle"
+                  data-pass-target="#authLoginPass"
                   aria-label="Mostrar senha"
                   aria-pressed="false"
+                  title="Mostrar senha"
                 >
-                  mostrar
+                  <i data-lucide="eye" class="w-4 h-4" aria-hidden="true"></i>
+                  <span class="sr-only">Mostrar senha</span>
                 </button>
               </div>
               <p class="form-error" id="authLoginPassError" hidden></p>
@@ -257,7 +263,6 @@
             </button>
           </form>
 
-          <!-- Cadastro -->
           <form
             id="authFormRegister"
             class="space-y-4 hidden"
@@ -266,11 +271,15 @@
             aria-describedby="registerHelp"
             aria-hidden="true"
             tabindex="-1"
+            novalidate
           >
             <p id="registerHelp" class="sr-only">Formulário de cadastro</p>
 
             <div>
-              <label class="block text-sm font-medium mb-1" for="authRegName">
+              <label
+                class="block text-sm font-medium mb-1 text-gray-700"
+                for="authRegName"
+              >
                 Nome completo
               </label>
               <input
@@ -285,7 +294,10 @@
             </div>
 
             <div>
-              <label class="block text-sm font-medium mb-1" for="authRegEmail">
+              <label
+                class="block text-sm font-medium mb-1 text-gray-700"
+                for="authRegEmail"
+              >
                 E-mail
               </label>
               <input
@@ -302,7 +314,10 @@
             </div>
 
             <div>
-              <label class="block text-sm font-medium mb-1" for="authRegPass">
+              <label
+                class="block text-sm font-medium mb-1 text-gray-700"
+                for="authRegPass"
+              >
                 Senha
               </label>
               <div class="relative">
@@ -323,7 +338,8 @@
                   aria-label="Mostrar senha"
                   aria-pressed="false"
                 >
-                  mostrar
+                  <i data-lucide="eye" class="w-5 h-5" aria-hidden="true"></i>
+                  <span class="sr-only">Mostrar senha</span>
                 </button>
               </div>
               <p id="passHint" class="text-xs text-slate-500 mt-1">
@@ -334,7 +350,7 @@
 
             <div>
               <label
-                class="block text-sm font-medium mb-1"
+                class="block text-sm font-medium mb-1 text-gray-700"
                 for="authRegConfirm"
               >
                 Confirmar senha
@@ -360,14 +376,11 @@
 
           <p class="text-center text-xs text-slate-500">
             Ao continuar, você concorda com os
-            <a href="/termos" class="font-bold text-slate-600 hover:underline">
+            <a href="#" class="font-bold text-slate-600 hover:underline">
               Termos
             </a>
             e a
-            <a
-              href="/privacidade"
-              class="font-bold text-slate-600 hover:underline"
-            >
+            <a href="#" class="font-bold text-slate-600 hover:underline">
               Política de Privacidade </a
             >.
           </p>
@@ -375,52 +388,43 @@
       </div>
     </template>
 
-    <template id="home">
-      <section class="max-w-7xl mx-auto px-4 py-8 md:py-12">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-          <div class="md:col-span-2 space-y-6 lg:space-y-8">
-            <header
-              class="card p-6 md:p-8 flex flex-col md:flex-row items-start justify-between gap-6 overflow-hidden relative"
-            >
-              <div class="flex items-center gap-4">
-                <div
-                  class="h-16 w-16 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-2xl"
-                >
-                  G
-                </div>
-                <div>
-                  <h1
-                    id="home-title"
-                    class="text-3xl md:text-4xl font-bold text-gray-900 leading-tight"
-                  >
-                    <span aria-hidden="true">👋</span>
-                  </h1>
-                  <p class="mt-1 text-gray-500">
-                    Como voce esta se sentindo hoje?
-                  </p>
-                </div>
-              </div>
-              <div class="md:ml-auto">
-                <a href="#/symptom" class="btn btn--primary whitespace-nowrap">
-                  <i class="fas fa-plus mr-2"></i> Registrar sintoma
-                </a>
-              </div>
-            </header>
+    <template id="home"
+      ><section
+        class="md:py-0 md:ml-12 max-w-8xl ml-0 mr-auto px-1 lg:pl- lg:pr-4"
+      >
+        <header
+          class="md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4"
+        >
+          <div class="flex items-center">
+            <div>
+              <h1 id="home-title" class="text-4xl font-bold text-gray-900 mb-2">
+                ...
+              </h1>
+              <span id="home-subtitle" class="text-1xl text-gray-500 font-bold">
+                Como você está se sentindo hoje?
+              </span>
+            </div>
+          </div>
 
+          <div class="mr-12">
+            <a href="#/symptom" class="btn btn--primary" role="button">
+              <i data-lucide="plus" class="w-5 h-5" aria-hidden="true"></i>
+              <span>Registrar sintoma</span>
+            </a>
+          </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-8">
+          <div class="md:col-span-2 space-y-1 lg:space-y-8">
             <section aria-labelledby="insights-title" class="my-6">
-              <div class="card-glass p-5">
+              <div class="card p-8">
                 <header class="flex items-center justify-between gap-3 mb-4">
                   <div class="flex items-center gap-2">
-                    <span class="icon-chip" aria-hidden="true">
-                      <svg viewBox="0 0 24 24" class="h-5 w-5">
-                        <path
-                          fill="currentColor"
-                          d="M3 13h2v8H3zm4-6h2v14H7zm4 3h2v11h-2zm4-5h2v16h-2zm4 8h2v8h-2z"
-                        />
-                      </svg>
-                    </span>
-                    <h2 id="insights-title" class="text-lg font-semibold">
-                      Insights últimos 30 dias
+                    <h2
+                      id="insights-title"
+                      class="text-xl font-semibold text-gray-800 mb-4"
+                    >
+                      Insights de Sintomas
                     </h2>
                   </div>
 
@@ -431,194 +435,160 @@
                   </div>
                 </header>
 
-                <!-- KPIs -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-                  <!-- Total -->
-                  <div class="card-aurora p-4">
-                    <p class="text-sm" style="color: var(--muted-foreground)">
-                      Registros
-                    </p>
-                    <div class="mt-1 flex items-baseline gap-2">
-                      <span id="ins-kpi-total" class="text-2xl font-semibold"
-                        >0</span
-                      >
-                      <span id="ins-kpi-total-delta" class="badge badge-up">
-                        <svg
-                          viewBox="0 0 24 24"
-                          class="h-3.5 w-3.5"
-                          fill="currentColor"
+                <div class="grid grid-cols-3 gap-6 pb-4 mb-4 m-5">
+                  <div
+                    class="bg-indigo-100 rounded-xl p-1 min-h-[150px] flex flex-col items-center justify-center text-center gap-1"
+                  >
+                    <i
+                      data-lucide="calendar"
+                      class="w-6 h-6 text-indigo-600 mb-1"
+                    ></i>
+                    <span id="ins-kpi-total" class="text-2xl font-bold">0</span>
+                    <span class="text-xs text-gray-500">Registros totais</span>
+                  </div>
+
+                  <div
+                    id="avg-pain-card"
+                    class="bg-purple-100 rounded-xl p-3 min-h-[150px] flex flex-col items-center justify-center text-center gap-1"
+                  >
+                    <div id="avg-pain-donut" class="relative w-24 h-24">
+                      <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="36"
+                          fill="none"
+                          stroke="#E5E7EB"
+                          stroke-width="12"
+                          stroke-linecap="round"
+                        />
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="36"
+                          fill="none"
+                          stroke="var(--primary)"
+                          stroke-width="12"
+                          stroke-linecap="round"
+                          transform="rotate(-90 50 50)"
+                          stroke-dasharray="0 226.19"
+                          stroke-dashoffset="0"
+                          data-circ
+                        />
+                        <text
+                          x="50"
+                          y="55"
+                          text-anchor="middle"
+                          font-size="22"
+                          font-weight="700"
+                          fill="var(--foreground)"
+                          data-value
                         >
-                          <path d="M7 14l5-5 5 5z" />
-                        </svg>
-                        +0%
-                      </span>
+                          —
+                        </text>
+                      </svg>
                     </div>
-                    <p
-                      class="text-xs mt-1"
-                      style="color: var(--muted-foreground)"
+                    <p class="text-sm font-medium text-gray-800">Dor Média</p>
+                    <span
+                      id="ins-kpi-avg-tag"
+                      class="text-sm font-semibold"
+                      style="color: var(--primary)"
+                      >-</span
                     >
-                      vs período anterior
-                    </p>
                   </div>
-
-                  <!-- Dor média -->
-                  <div class="card-aurora p-4">
-                    <p class="text-sm" style="color: var(--muted-foreground)">
-                      Dor média
-                    </p>
-                    <div class="mt-1 flex items-baseline gap-2">
-                      <span id="ins-kpi-avg" class="text-2xl font-semibold"
-                        >—</span
-                      >
-                      <span
-                        id="ins-kpi-avg-tag"
-                        class="badge"
-                        style="
-                          background: var(--muted);
-                          color: var(--foreground);
-                        "
-                        >estável</span
-                      >
-                    </div>
-                    <p
-                      class="text-xs mt-1"
-                      style="color: var(--muted-foreground)"
+                  <div
+                    class="bg-yellow-100 rounded-xl p-3 min-h-[150px] flex flex-col items-center justify-center text-center gap-1"
+                  >
+                    <span id="ins-kpi-top-icon" class="mb-1"></span>
+                    <span
+                      id="ins-kpi-top"
+                      class="text-2xl font-semibold truncate max-w-[14ch]"
+                      >—</span
                     >
-                      escala 1–10
-                    </p>
-                  </div>
-
-                  <!-- Top sintoma -->
-                  <div class="card-aurora p-4">
-                    <p class="text-sm" style="color: var(--muted-foreground)">
-                      Mais recorrente
-                    </p>
-                    <div class="mt-1 flex items-baseline gap-2">
-                      <span
-                        id="ins-kpi-top"
-                        class="text-2xl font-semibold truncate max-w-[14ch]"
-                        >—</span
-                      >
-                    </div>
-                    <p
+                    <span class="text-xs text-gray-500">Mais recorrente</span>
+                    <span
                       id="ins-kpi-top-count"
-                      class="text-xs mt-1"
+                      class="text-xs"
                       style="color: var(--muted-foreground)"
+                      >— ocorrências</span
                     >
-                      — ocorrências
-                    </p>
                   </div>
                 </div>
-
-                <!-- Lista -->
+                <div class="border-b bg-gray-100 mb-5"></div>
                 <ul class="space-y-2">
                   <li class="flex items-start gap-3">
-                    <span class="dot dot-emerald" aria-hidden="true"></span>
-                    <p id="ins-1" class="text-sm">
-                      Você registrou <strong>0</strong> sintomas nos últimos 30
-                      dias.
+                    <i
+                      data-lucide="check-circle"
+                      class="w-4 h-4 mr-2 mt-0.5 text-purple-500 flex-shrink-0"
+                    ></i>
+                    <p id="ins-1" class="text-sm text-gray-600">
+                      Você registrou <strong id="ins-total">0</strong> sintomas
+                      nos últimos <span id="ins-range">30</span> dias.
                     </p>
                   </li>
                   <li class="flex items-start gap-3">
-                    <span class="dot dot-indigo" aria-hidden="true"></span>
-                    <p id="ins-2" class="text-sm">
-                      Sua <strong>dor média</strong> está
-                      <strong>estável</strong>.
+                    <i
+                      data-lucide="bar-chart-2"
+                      class="w-4 h-4 mr-2 mt-0.5 text-yellow-500 flex-shrink-0"
+                    ></i>
+                    <p id="ins-2" class="text-sm text-gray-600">
+                      Sua dor média está
+                      <strong
+                        id="ins-avg-label"
+                        class="font-semibold ml-1 text-yellow-500"
+                        >-</strong
+                      >.
                     </p>
                   </li>
                   <li class="flex items-start gap-3">
-                    <span class="dot dot-amber" aria-hidden="true"></span>
-                    <p id="ins-3" class="text-sm">
-                      O sintoma mais frequente foi <strong>—</strong>.
+                    <i
+                      data-lucide="alert-triangle"
+                      class="w-4 h-4 mr-2 mt-0.5 text-purple-500 flex-shrink-0"
+                    ></i>
+                    <p id="ins-3" class="text-sm text-gray-600">
+                      O sintoma mais frequente foi
+                      <strong id="ins-top" class="text-purple-500">—</strong>.
                     </p>
                   </li>
                 </ul>
               </div>
             </section>
 
-            <section class="card-glass space-y-4">
+            <section class="card p-8">
               <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <h2 class="text-xl font-semibold text-gray-800 mb-4">
+                    Sintomas recentes
+                  </h2>
+                </div>
                 <a
                   href="#/analytics"
                   id="view-all-link"
-                  class="ml-auto text-sm font-medium px-4 py-2 rounded-full transition bg-violet-600 text-white hover:bg-violet-700 focus:ring-2 focus:ring-violet-400 focus:outline-none"
+                  class="text-purple-600 hover:text-purple-700 font-medium"
                 >
                   Ver todos os registros
                 </a>
               </div>
-
-              <ul id="user-symptoms-list" class="space-y-4"></ul>
+              <ul id="user-symptoms-list" class="divide-y divide-gray-100"></ul>
             </section>
           </div>
 
           <aside
-            class="md:col-span-1 space-y-6 lg:space-y-8 md:sticky md:top-8 self-start"
+            class="md:mr-12 md:ml-12 md:col-span-1 md:sticky md:top- self-start mt-6 space-y-12 lg:space-y-8"
           >
-            <article class="card p-6">
-              <header class="flex items-center justify-between mb-3">
-                <h3 class="font-semibold text-lg text-gray-800">
-                  Sintomas em setembro
-                </h3>
-                <a
-                  href="#/analytics"
-                  class="text-gray-400 hover:text-gray-700 transition"
-                  title="Ver insights"
+            <section class="card p-8 border border-purple-300 bg-purple-100">
+              <header class="flex items-center gap-2 mb-4">
+                <span
+                  class="inline-flex h-8 w-8 items-center justify-center text-purple-700"
                 >
-                  <i class="fas fa-arrow-up-right-from-square"></i>
-                </a>
+                  <i data-lucide="brain" class="w-6 h-6"></i>
+                </span>
+                <h2 class="text-xl font-semibold text-purple-700">
+                  Padrões de Saúde
+                </h2>
               </header>
-              <div
-                class="text-5xl font-bold text-gray-900 leading-none"
-                id="month-total"
-              >
-                0
-              </div>
-              <p class="text-gray-500 text-sm mt-1">Comparado ao mês passado</p>
-              <button class="mt-4 w-full btn btn--primary !justify-center">
-                <i class="fas fa-chart-pie mr-2"></i> Ver insights
-              </button>
-            </article>
 
-            <section aria-labelledby="tips-title" class="my-6">
-              <div class="card-glass p-5">
-                <header class="flex items-center gap-2 mb-4">
-                  <span class="icon-chip" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" class="h-5 w-5">
-                      <path
-                        fill="currentColor"
-                        d="M9 21h6v-1.5H9V21Zm3-19a7.5 7.5 0 0 0-4.75 13.29c.4.35.75.77 1 1.25h7.5c.25-.48.6-.9 1-1.25A7.5 7.5 0 0 0 12 2Z"
-                      />
-                    </svg>
-                  </span>
-                  <h2 id="tips-title" class="text-lg font-semibold">
-                    Dicas para você
-                  </h2>
-                </header>
-
-                <ul class="space-y-3">
-                  <li class="flex items-start gap-3">
-                    <span class="dot dot-emerald"></span>
-                    <p class="text-sm">
-                      Continue registrando seus sintomas diariamente — isso
-                      ajuda a ter um histórico completo.
-                    </p>
-                  </li>
-                  <li class="flex items-start gap-3">
-                    <span class="dot dot-amber"></span>
-                    <p class="text-sm">
-                      Se a dor média ficar acima de <strong>7/10</strong> por
-                      mais de uma semana, considere procurar atendimento médico.
-                    </p>
-                  </li>
-                  <li class="flex items-start gap-3">
-                    <span class="dot dot-indigo"></span>
-                    <p class="text-sm">
-                      Hidrate-se e anote fatores externos (sono, alimentação)
-                      para identificar gatilhos.
-                    </p>
-                  </li>
-                </ul>
-              </div>
+              <div id="health-tips-container" class="space-y-4"></div>
             </section>
           </aside>
         </div>
@@ -627,36 +597,33 @@
 
     <template id="symptom">
       <section id="symptom-view" class="max-w-3xl mx-auto p-4 sm:p-6 md:p-8">
-        <header class="mb-8 flex items-center justify-between">
-          <h2
-            id="symptom-title"
-            class="text-2xl md:text-3xl font-bold text-gray-800"
-          >
-            <i class="fas fa-notes-medical text-indigo-600 mr-2"></i> Registrar
-            Sintoma
-          </h2>
-          <a
-            href="#/home"
-            class="btn btn--outline"
-            aria-label="Voltar para Início"
-          >
-            <i class="fas fa-arrow-left mr-2"></i> Voltar
-          </a>
-        </header>
+        <form id="symptomForm" class="space-y-6 card p-9" novalidate>
+          <header class="mb-0 flex items-center justify-between">
+            <h2
+              id="symptom-title"
+              class="text-2xl md:text-3xl font-bold text-gray-800 flex items-center"
+            >
+              <i
+                data-lucide="clipboard-list"
+                class="w-7 h-7 text-indigo-600 mr-2"
+              ></i>
+              Registrar Sintoma
+            </h2>
 
-        <form id="symptomForm" class="space-y-6 card p-6" novalidate>
-          <div class="space-y-4">
-            <h3 class="font-semibold text-lg text-gray-800">Quando ocorreu?</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div class="input-group">
-                <span class="icon"><i class="fas fa-calendar-alt"></i></span>
-                <input type="date" id="sym-date" name="date" required />
-              </div>
-            </div>
-          </div>
+            <a
+              href="#/home"
+              class="btn btn--outline flex items-center text-purple-600"
+              aria-label="Voltar para Início"
+            >
+              <i data-lucide="chevron-left" class="w-5 h-5 mr-2"></i> Voltar
+            </a>
+          </header>
+          <p class="text-1xl text-gray-500">
+            Preencha os detalhes para acompanhar seu bem-estar.
+          </p>
 
           <div class="relative w-full">
-            <h3 class="font-semibold text-lg text-gray-800 mb-2">
+            <h3 class="font-semibold text-1xl text-purple-600 mb-2">
               Qual o sintoma?
             </h3>
             <div
@@ -668,7 +635,8 @@
                 Selecione um sintoma...
               </span>
               <i
-                class="fas fa-chevron-down text-gray-400 transition-transform duration-200"
+                data-lucide="chevron-down"
+                class="text-gray-400 transition-transform duration-200"
               ></i>
             </div>
             <ul
@@ -686,7 +654,7 @@
           <div id="sym-outro-wrapper" class="hidden mt-2">
             <label for="sym-outro" class="sr-only">Descreva o sintoma</label>
             <div class="input-group">
-              <span class="icon"><i class="fas fa-pencil-alt"></i></span>
+              <span class="icon"><i data-lucide="pencil"></i></span>
               <input
                 id="sym-outro"
                 type="text"
@@ -696,26 +664,27 @@
             </div>
           </div>
 
-          <!-- Nível de Intensidade -->
           <div class="space-y-4">
-            <h3 class="font-semibold text-lg text-gray-800">
-              Nível de intensidade
+            <h3 class="font-semibold text-1xl text-purple-600">
+              Nível de Intensidade
             </h3>
             <div class="text-center">
+              <div
+                id="sym-level-label"
+                class="text-gray-500 font-semibold mt-1"
+              >
+                Moderado
+              </div>
               <div
                 id="sym-level-display"
                 class="flex items-center justify-center gap-2"
               >
-                <span id="sym-level-emoji" class="text-4xl">😐</span>
                 <output
                   id="sym-level-num"
                   for="sym-level"
-                  class="text-4xl font-bold text-indigo-600"
+                  class="text-2xl font-bold text-indigo-600"
                   >5/10</output
                 >
-              </div>
-              <div id="sym-level-label" class="text-gray-500 font-medium mt-1">
-                Moderado
               </div>
             </div>
             <label for="sym-level" class="sr-only">Intensidade de 1 a 10</label>
@@ -726,30 +695,27 @@
               min="1"
               max="10"
               value="5"
-              class="w-full h-2 cursor-pointer slider-track"
+              class="w-full h-2 cursor-pointer slider-track bg-purple-100"
               aria-describedby="int-hint"
             />
             <div
               id="int-hint"
               class="flex justify-between text-xs text-gray-500"
             >
-              <span>Muito leve</span>
-              <span>Insuportável</span>
+              <span>1 - Muito leve</span>
+              <span>10 - Insuportável</span>
             </div>
           </div>
 
-          <!-- Detalhes Adicionais -->
           <div class="space-y-4">
-            <h3 class="font-semibold text-lg text-gray-800">
-              Detalhes Adicionais (opcional)
+            <h3 class="font-semibold text-1xl text-purple-500">
+              Detalhes Adicionais (Opcional)
             </h3>
             <label for="sym-notes" class="sr-only"
               >Descrição das observações</label
             >
             <div class="input-group">
-              <span class="icon self-start mt-3"
-                ><i class="fas fa-sticky-note"></i
-              ></span>
+              <span class="icon self-start mt-3"> </span>
               <textarea
                 id="sym-notes"
                 name="notes"
@@ -760,7 +726,6 @@
             </div>
           </div>
 
-          <!-- Botões de Ação e Mensagens -->
           <div class="space-y-4 pt-4">
             <p
               id="sym-form-error"
@@ -778,48 +743,207 @@
                 >Cancelar</a
               >
               <button type="submit" class="btn btn--primary py-3">
-                Salvar Registro
+                <i data-lucide="check"></i> Salvar Registro
               </button>
             </div>
           </div>
         </form>
       </section>
     </template>
+
+    <template id="analytics">
+      <section class="mx-auto w-full max-w-3xl lg:max-w-4xl p-4 md:p-6 lg:p-8">
+        <div class="card p-8">
+          <header
+            class="flex flex-col gap-1 md:flex-row md:items-center md:justify-between mb-5"
+          >
+            <div class="flex items-center gap-2">
+              <i data-lucide="history" class="w-5 h-5 text-gray-700"></i>
+              <div>
+                <h2 class="text-2xl font-bold text-gray-900">
+                  Histórico de Sintomas
+                </h2>
+                <p id="hist-count" class="text-sm text-gray-500">—</p>
+              </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
+              <div
+                id="hist-ranges"
+                class="grid grid-cols-4 bg-gray-100 rounded-xl p-1 h-10"
+              >
+                <button
+                  class="px-3 text-sm rounded-lg bg-white shadow-sm"
+                  data-range="0"
+                  aria-pressed="true"
+                >
+                  Tudo
+                </button>
+                <button
+                  class="px-3 text-sm rounded-lg hover:bg-white"
+                  data-range="7"
+                  aria-pressed="false"
+                >
+                  7d
+                </button>
+                <button
+                  class="px-3 text-sm rounded-lg hover:bg-white"
+                  data-range="30"
+                  aria-pressed="false"
+                >
+                  30d
+                </button>
+                <button
+                  class="px-3 text-sm rounded-lg hover:bg-white"
+                  data-range="90"
+                  aria-pressed="false"
+                >
+                  90d
+                </button>
+              </div>
+
+              <label class="inline-flex items-center gap-2">
+                <span class="text-sm text-gray-600">Ordenar</span>
+                <select
+                  id="hist-sort"
+                  class="text-sm border border-gray-300 rounded-lg px-2 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                >
+                  <option value="date_desc">Mais recentes</option>
+                  <option value="date_asc">Mais antigas</option>
+                  <option value="pain_desc">Maior dor</option>
+                  <option value="pain_asc">Menor dor</option>
+                </select>
+              </label>
+            </div>
+          </header>
+          <div
+            id="hist-empty"
+            class="hidden p-8 text-center text-gray-500 border-b border-gray-200"
+          >
+            <div
+              class="mx-auto mb-3 w-12 h-12 grid place-items-center rounded-full bg-purple-50"
+            >
+              <i data-lucide="notepad-text" class="w-6 h-6 text-purple-600"></i>
+            </div>
+            Nenhum registro encontrado.
+          </div>
+
+          <ul id="hist-list" class="divide-y divide-gray-200"></ul>
+
+          <template data-role="hist-item">
+            <li class="px-5 py-3">
+              <div class="flex justify-between items-center gap-4">
+                <div class="flex items-center min-w-0">
+                  <i
+                    data-lucide="activity"
+                    class="hist-icon w-5 h-5 text-gray-600 mr-3"
+                  ></i>
+                  <p class="hist-title font-medium text-gray-800 truncate">—</p>
+                  <span
+                    class="hist-badge ml-3 text-xs font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-700"
+                  >
+                    Intensidade 0/10
+                  </span>
+                </div>
+                <div
+                  class="flex items-center text-gray-500 text-sm flex-shrink-0 gap-4"
+                >
+                  <time class="hist-date whitespace-nowrap">—</time>
+                  <div class="relative">
+                    <button
+                      class="h-8 w-8 rounded-lg text-gray-500 hover:bg-gray-100 flex items-center justify-center"
+                      data-menu-btn
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                      title="Mais ações"
+                    >
+                      <i data-lucide="more-horizontal" class="w-5 h-5"></i>
+                    </button>
+                    <div
+                      class="hist-menu hidden absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-xl shadow-lg z-50 py-1"
+                    >
+                      <button
+                        data-act="view"
+                        class="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
+                      >
+                        <i data-lucide="eye" class="w-4 h-4"></i> Ver detalhes
+                      </button>
+                      <button
+                        data-act="edit"
+                        class="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
+                      >
+                        <i data-lucide="pencil" class="w-4 h-4"></i> Editar
+                      </button>
+                      <button
+                        data-act="delete"
+                        class="w-full px-3 py-2 text-left text-sm hover:bg-red-50 text-red-600 flex items-center gap-2"
+                      >
+                        <i data-lucide="trash-2" class="w-4 h-4"></i> Excluir
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <p
+                class="hist-notes mt-1 text-sm text-gray-600 line-clamp-2 hidden"
+              >
+                —
+              </p>
+            </li>
+          </template>
+        </div>
+      </section>
+    </template>
+
     <div
       id="confirm-modal"
-      class="fixed inset-0 z-[2000] hidden"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50"
       aria-hidden="true"
     >
-      <div class="absolute inset-0 flex items-center justify-center p-4">
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="confirm-title"
-          aria-describedby="confirm-desc"
-          class="w-full max-w-md rounded-2xl bg-white shadow-xl border border-gray-200 overflow-hidden"
-        >
-          <div class="px-5 pt-5">
-            <h3 id="confirm-title" class="text-lg font-semibold text-gray-900">
-              Confirmar ação
-            </h3>
-            <p id="confirm-desc" class="mt-2 text-gray-600">
-              Tem certeza que deseja continuar?
-            </p>
+      <div class="absolute inset-0 bg-black/50"></div>
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="confirm-title"
+        aria-describedby="confirm-desc"
+        class="relative mx-auto w-[90%] max-w-md rounded-2xl bg-white shadow-2xl"
+      >
+        <div class="p-6">
+          <div class="flex items-start gap-3">
+            <i
+              id="confirm-icon"
+              data-lucide="help-circle"
+              class="w-6 h-6 text-indigo-600"
+            ></i>
+            <div>
+              <h2
+                id="confirm-title"
+                class="text-lg font-semibold text-gray-900"
+              >
+                Título
+              </h2>
+              <p id="confirm-desc" class="mt-1 text-sm text-gray-600">
+                Descrição
+              </p>
+            </div>
           </div>
-          <div class="px-5 pb-5 mt-5 flex items-center justify-end gap-2">
+
+          <div class="mt-6 flex justify-end gap-2">
             <button
               type="button"
               data-confirm-cancel
-              class="px-4 h-10 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50"
+              class="h-9 rounded-lg border border-gray-300 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
               Cancelar
             </button>
             <button
               type="button"
               data-confirm-ok
-              class="px-4 h-10 rounded-xl bg-rose-600 text-white hover:bg-rose-700"
+              id="confirm-ok-btn"
+              class="h-9 rounded-lg px-4 text-sm font-semibold text-white bg-purple-500 hover:bg-purple-700"
             >
-              Excluir
+              Confirmar
             </button>
           </div>
         </div>
@@ -831,14 +955,19 @@
     <script src="./js/services/user-symptoms.js" defer></script>
     <script src="./js/hooks/auth.js" defer></script>
     <script src="./js/hooks/symptom-form.js" defer></script>
+    <script src="./js/hooks/health-tips.js" defer></script>
     <script src="./js/hooks/home.js" defer></script>
+    <script src="./js/hooks/analytics.js" defer></script>
+    <script src="./js/hooks/home-insights.js" defer></script>
     <script src="./js/routes/index.js" defer></script>
     <script src="./js/sidebar.js" defer></script>
     <script src="./js/script.js" defer></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"
-      defer
-    ></script>
-    <script src="./js/hooks/home-insights.js" defer></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        if (window.lucide?.createIcons) {
+          lucide.createIcons();
+        }
+      });
+    </script>
   </body>
 </html>

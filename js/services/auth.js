@@ -1,90 +1,99 @@
 (function () {
-  const API = "http://127.0.0.1:5000/auth";
+  const URL_AUTENTICACAO = "http://127.0.0.1:5000/auth";
 
   const LS_TOKEN = "auth.token";
-  const LS_USER = "auth.user";
+  const LS_USUARIO = "auth.user";
 
-  function setAuth({ token, user }) {
+  function definirAutenticacao({ token, usuario }) {
     if (token) localStorage.setItem(LS_TOKEN, token);
     else localStorage.removeItem(LS_TOKEN);
 
-    if (user) localStorage.setItem(LS_USER, JSON.stringify(user));
-    else localStorage.removeItem(LS_USER);
-    
+    if (usuario) localStorage.setItem(LS_USUARIO, JSON.stringify(usuario));
+    else localStorage.removeItem(LS_USUARIO);
+
     document.dispatchEvent(
-      new CustomEvent("auth:change", { detail: { token, user } })
+      new CustomEvent("auth:change", { detail: { token, user: usuario } })
     );
   }
 
-  function getToken() {
+  function obterToken() {
     return localStorage.getItem(LS_TOKEN) || null;
   }
 
-  function getUser() {
-    const raw = localStorage.getItem(LS_USER);
-    if (!raw) return null;
+  function obterUsuario() {
+    const bruto = localStorage.getItem(LS_USUARIO);
+    if (!bruto) return null;
     try {
-      return JSON.parse(raw);
+      return JSON.parse(bruto);
     } catch {
       return null;
     }
   }
 
-  function logout() {
-    setAuth({ token: null, user: null });
+  function sair() {
+    definirAutenticacao({ token: null, usuario: null });
   }
 
-  // ===== http helpers =====
-  function toFormData(body) {
+  function paraFormData(corpo) {
     const fd = new FormData();
-    for (const k in body) fd.append(k, body[k]);
+    for (const k in corpo) fd.append(k, corpo[k]);
     return fd;
   }
 
-  async function postForm(url, body) {
-    const r = await fetch(url, { method: "POST", body: toFormData(body) });
+  async function postarFormulario(url, corpo) {
+    const r = await fetch(url, { method: "POST", body: paraFormData(corpo) });
     const data = await r.json().catch(() => ({}));
-    return { ok: r.ok, ...data };
+    return { ok: r.ok, status: r.status, ...data };
   }
 
-  // fetch autenticado opcional (pra rotas protegidas)
-  async function authFetch(url, options = {}) {
-    const token = getToken();
-    const headers = { ...(options.headers || {}) };
+  async function fetchAutenticado(url, opcoes = {}) {
+    const token = obterToken();
+    const headers = { ...(opcoes.headers || {}) };
     if (token) headers.Authorization = `Bearer ${token}`;
-    const r = await fetch(url, { ...options, headers });
-    if (r.status === 401) logout(); // token expirou -> derruba sessão
+    const r = await fetch(url, { ...opcoes, headers });
+    if (r.status === 401) sair();
     return r;
   }
 
-  // ===== endpoints =====
-  async function login({ email, password }) {
-    const res = await postForm(`${API}/login`, { email, password });
-    // se o backend retornar token/user, salva aqui
-    if (res.ok && res.token)
-      setAuth({ token: res.token, user: res.user || null });
+  async function entrar({ email, password }) {
+    const res = await postarFormulario(`${URL_AUTENTICACAO}/login`, {
+      email,
+      password,
+    });
+    if (res.ok && res.token) {
+      definirAutenticacao({ token: res.token, usuario: res.user || null });
+    }
     return res;
   }
 
-  async function signup({ name, email, password }) {
-    const res = await postForm(`${API}/signup`, { name, email, password });
-    // alguns backends já retornam token no signup
-    if (res.ok && res.token)
-      setAuth({ token: res.token, user: res.user || null });
+  async function cadastrar({ name, email, password }) {
+    const res = await postarFormulario(`${URL_AUTENTICACAO}/cadastro`, {
+      name,
+      email,
+      password,
+    });
+    if (res.ok && res.token) {
+      definirAutenticacao({ token: res.token, usuario: res.user || null });
+    }
     return res;
   }
 
-  // expõe no global
   window.Auth = {
-    login,
-    signup,
-    setAuth,
-    getToken,
-    getUser,
-    logout,
-    authFetch,
+    entrar,
+    cadastrar,
+    definirAutenticacao,
+    obterToken,
+    obterUsuario,
+    sair,
+    fetchAutenticado,
+
+    login: entrar,
+    signup: cadastrar,
+    getToken: obterToken,
+    getUser: obterUsuario,
+    logout: sair,
+    authFetch: fetchAutenticado,
   };
 
-  // sinaliza que tá pronto
   document.dispatchEvent(new Event("auth:ready"));
 })();

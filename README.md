@@ -1,41 +1,84 @@
-# Aurora Saúde – Frontend
+### `Pós-Graduação em Desenvolvimento FullStack @PUC-RIO – MVP` 
 
-Este projeto corresponde ao **MVP** desenvolvido na disciplina *Desenvolvimento FullStack Básico* do curso de Pós-Graduação em Desenvolvimento FullStack da **PUC-Rio**.  
+# 🌌 Aurora Saúde – Frontend
+
+Este frontend corresponde ao **MVP** desenvolvido na disciplina *Desenvolvimento FullStack Básico* do curso de Pós-Graduação em Desenvolvimento FullStack da **PUC-Rio**.  
 
 O sistema **Aurora Saúde** tem como finalidade auxiliar no **registro e monitoramento de sintomas de saúde**, de forma simples e acessível, visando apoiar o acompanhamento cotidiano do usuário.
 
 ---
 
 ## Funcionalidades
-- 📋 Registro diário de sintomas (ex: dor, febre, enjoo, fadiga).  
-- 🗂️ Filtros por data e tipo de sintoma.  
-- 📊 Visualização em cards e gráficos resumidos.  
-- 📝 Campo de observações para contexto clínico.  
-- 🌈 Interface leve e responsiva, com design moderno utilizando **Tailwind CSS**.  
+
+- Registro diário de sintomas (ex.: dor, febre, enjoo, fadiga).
+
+- Filtro por data e tipo de sintoma.
+
+- Histórico exibido em formato de cards.
+
+- Campo de observações para contexto clínico.
 
 ---
 
-## Tecnologias Utilizadas
+## Tecnologias
+
 - **HTML5** → estrutura da aplicação.  
 - **CSS3** → customizações adicionais.  
-- **JavaScript** → interatividade, manipulação do DOM e armazenamento local.  
+- **JavaScript** → interatividade, manipulação do DOM e armazenamento local.
 - **Tailwind CSS (via CDN)** → estilização rápida e responsiva.  
 
 ---
 
 ## Estrutura do Projeto
+
 ```bash
-front_aurorasaude/
- ├── index.html        # Arquivo principal
- ├── src/
- │   ├── css/          # Estilos adicionais
- │   ├── js/           # Scripts JavaScript
- │   └── assets/       # Logos, ícones e imagens
- └── README.md
+frontend/
+ ├── index.html              
+ ├── assets/                 # Recursos estáticos
+ │   ├── css/                # Estilos adicionais
+ │   │   ├── base.css
+ │   │   ├── components.css
+ │   │   └── layout.css
+ │   └── js/                 # Scripts organizados em módulos
+ │       ├── hooks/         
+ │       │   ├── analytics.js
+ │       │   ├── auth.js
+ │       │   ├── health-tips.js
+ │       │   ├── home-insights.js
+ │       │   ├── home.js
+ │       │   └── symptom-form.js
+ │       ├── routes/         # Definição de rotas
+ │       │   └── index.js
+ │       ├── services/       # Serviços de comunicação com backend
+ │       │   ├── auth.js
+ │       │   ├── symptoms.js
+ │       │   └── user-symptoms.js
+ │       ├── script.js       # Script principal de inicialização
+ │       └── sidebar.js      # Controle do menu lateral
+ └── README.md               
+
 ```
 ---
-## Autoria  
 
-**Projeto desenvolvido por:** Graziela Behrens  
-**Disciplina:** Desenvolvimento FullStack Básico  
-**Curso:** Pós-Graduação em Desenvolvimento FullStack – PUC-Rio  
+## Como rodar o projeto
+
+### 1. Clonar o repositório
+
+```bash
+git clone https://github.com/grazibehr/aurorasaude-front
+
+cd aurorasaude-front
+```
+
+### 2. Abra o arquivo index.html diretamente no navegador.
+(não há necessidade de servidor local para este MVP)
+
+---
+
+
+## 👩‍💻 Autoria
+
+Desenvolvido por [@grazielabehrens](https://github.com/grazibehr)              
+Desenvolvedora FullStack • Graduada em Ciência da Computação  
+Pós-graduanda em Desenvolvimento FullStack – PUC-Rio
+LinkedIn: [linkedin.com/in/grazielabehrens](https://www.linkedin.com/in/grazielabehrens/) 

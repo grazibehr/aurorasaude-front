@@ -1,70 +1,58 @@
 :root {
-  --background: #fafafa; /* hsl(0 0% 98%) → branco quase gelo */
-  --foreground: #2a2f38; /* hsl(220 15% 20%) → cinza azulado escuro */
+  --background: #f5f5f5;
+  --foreground: #2a2f38;
 
-  --card: #ffffff; /* hsl(0 0% 100%) → branco puro */
-  --card-foreground: #2a2f38; /* hsl(220 15% 20%) → cinza azulado escuro */
+  --text-gray: #707070;
+  --card: #ffffff;
+  --card-foreground: #2a2f38;
 
-  --popover: #ffffff; /* hsl(0 0% 100%) → branco puro */
-  --popover-foreground: #2a2f38; /* hsl(220 15% 20%) → cinza azulado escuro */
+  --popover: #ffffff;
+  --popover-foreground: #2a2f38;
 
-  --primary: #8c12fd; /* hsl(200 100% 45%) → azul ciano forte */
-  --primary-foreground: #ffffff; /* branco */
-  --primary-glow: #33bbff; /* hsl(200 100% 65%) → azul claro vibrante */
+  --primary: rgb(147, 36, 250);
+  --hover-color: rgb(183, 76, 255);
+  --primary-foreground: #ffffff;
+  --primary-glow: #33bbff;
 
-  --secondary: #33cc80; /* hsl(150 60% 50%) → verde esmeralda médio */
-  --secondary-foreground: #ffffff; /* branco */
+  --secondary: #33cc80;
+  --secondary-foreground: #ffffff;
 
-  --accent: #b366d6; /* hsl(280 60% 70%) → lilás/violeta claro */
-  --accent-foreground: #ffffff; /* branco */
+  --accent: #b366d6;
+  --accent-foreground: #ffffff;
 
-  --wellness: #f280a6; /* hsl(330 80% 75%) → rosa chiclete */
-  --wellness-foreground: #662640; /* hsl(330 40% 25%) → vinho amarronzado */
+  --wellness: #f280a6;
+  --wellness-foreground: #662640;
 
-  --muted: #f2f4f7; /* hsl(220 15% 95%) → cinza muito claro */
-  --muted-foreground: #8c99a6; /* hsl(220 10% 55%) → cinza médio azulado */
+  --muted: #f2f4f7;
+  --muted-foreground: #8c99a6;
 
-  --destructive: #e11919; /* hsl(0 84.2% 60.2%) → vermelho vivo */
-  --destructive-foreground: #ffffff; /* branco */
+  --destructive: #e11919;
+  --destructive-foreground: #ffffff;
 
-  --border: #d6dae2; /* hsl(220 15% 88%) → cinza claro azulado */
-  --input: #f2f4f7; /* hsl(220 15% 95%) → cinza muito claro */
-  --ring: #0088cc; /* hsl(200 100% 45%) → azul ciano forte */
+  --border: #d6dae2;
+  --input: #f2f4f7;
+  --ring: #0088cc;
 
   --radius: 1rem;
 
-  /* Gradientes */
-  --gradient-aurora: linear-gradient(
-    135deg,
-    #0088cc 0%,
-    #33cc80 50%,
-    #b366d6 100%
-  );
-
-  --gradient-wellness: linear-gradient(
-    45deg,
-    hsl(var(--primary-glow) / 0.1),
-    hsl(var(--wellness) / 0.1)
-  );
-
-  /* Shadows */
-  --shadow-aurora: 0 20px 60px -12px rgba(0, 136, 204, 0.25); /* azul ciano */
-  --shadow-wellness: 0 10px 40px -8px rgba(242, 128, 166, 0.3); /* rosa chiclete */
-  --shadow-soft: 0 4px 20px -4px rgba(42, 47, 56, 0.1); /* cinza escuro */
+  --primary-purple: #9333ea;
+  --primary-purple-hover: #861eef;
+  --primary-purple-light: #f3e8ff;
+  --secondary-yellow: #facc15;
 
   /* Transitions */
   --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
   /* Sidebar tokens */
-  --sidebar-background: #fafafa; /* branco gelo */
-  --sidebar-foreground: #3f3f46; /* cinza carvão */
-  --sidebar-primary: #1a1a1a; /* quase preto */
-  --sidebar-primary-foreground: #fafafa; /* branco gelo */
-  --sidebar-accent: #f5f5f5; /* cinza claro neutro */
-  --sidebar-accent-foreground: #1a1a1a; /* quase preto */
-  --sidebar-border: #e3e6eb; /* cinza bem clarinho */
-  --sidebar-ring: #337dff; /* azul royal vivo */
+  --sidebar-background: #fafafa;
+  --sidebar-foreground: #3f3f46;
+  --sidebar-primary: #1a1a1a;
+  --sidebar-primary-foreground: #fafafa;
+  --sidebar-accent: #f5f5f5;
+  --sidebar-accent-foreground: #1a1a1a;
+  --sidebar-border: #e3e6eb;
+  --sidebar-ring: #337dff;
 
   --sidebar-w: 16rem;
   --sidebar-w-collapsed: 4rem;
@@ -76,13 +64,12 @@
 html,
 body {
   height: 100%;
-} /* BASE */
-body {
-  color: hsl(var(--foreground));
-  background: hsl(var(--background));
 }
 
-/* Inputs */
+body {
+  background: var(--background);
+}
+
 input,
 select,
 textarea {
@@ -101,16 +88,14 @@ textarea:focus {
   box-shadow: 0 0 0 3px hsl(var(--ring) / 0.35);
 }
 
-/* CARD – defina UMA vez só */
 .card {
   background: hsl(var(--card));
-  color: hsl(var(--card-foreground));
   border: 1px solid hsl(var(--border));
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-soft);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  color: hsl(var(--foreground));
 }
 
-/* BOTÕES */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -135,10 +120,13 @@ textarea:focus {
 }
 
 .btn--primary {
-  color: hsl(var(--primary-foreground));
-  background: hsl(var(--primary));
+  color: var(--primary-foreground);
+  background: var(--primary);
+  border-radius: 0.9rem;
+  padding: 0.375rem 0.75rem;
   border: 1px solid transparent;
-  box-shadow: 0 6px 20px -6px color-mix(in srgb, hsl(var(--primary)) 35%, transparent);
+  box-shadow: 0 6px 20px -6px color-mix(in srgb, var(--primary) 35%, transparent);
+  transition: var(--transition-smooth);
 }
 .btn--primary:hover {
   filter: brightness(0.95);
@@ -149,65 +137,7 @@ textarea:focus {
   background: transparent;
   border: 1px solid hsl(var(--primary));
 }
-.btn--ghost {
-  color: hsl(var(--foreground));
-  background: transparent;
-  border: 1px solid hsl(var(--border));
-}
-.btn--ghost:hover {
-  background: hsl(var(--muted));
-}
 
-/* BADGES/CHIPS */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.125rem 0.5rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  background: hsl(var(--muted));
-  color: hsl(var(--foreground));
-  border: 1px solid transparent;
-}
-.badge-up {
-  background: color-mix(in srgb, hsl(var(--secondary)) 15%, #fff);
-  color: color-mix(in srgb, hsl(var(--secondary)) 60%, #000);
-}
-.badge-down {
-  background: color-mix(in srgb, hsl(var(--destructive)) 12%, #fff);
-  color: color-mix(in srgb, hsl(var(--destructive)) 55%, #000);
-}
-
-.chip {
-  padding: 0.125rem 0.5rem;
-  border-radius: 9999px;
-  font-size: 11px;
-  font-weight: 600;
-  background: color-mix(in srgb, hsl(var(--primary)) 14%, #fff);
-  color: hsl(var(--primary));
-}
-
-/* DOTS */
-.dot {
-  width: 0.625rem;
-  height: 0.625rem;
-  border-radius: 9999px;
-  display: inline-block;
-  margin-top: 0.25rem;
-}
-.dot-emerald {
-  background: hsl(var(--secondary));
-}
-.dot-indigo {
-  background: hsl(var(--accent));
-}
-.dot-amber {
-  background: 38 92% 50% / 1;
-} /* ou defina um token amber se preferir */
-
-/* INPUT GROUPS – troque hardcodes */
 .input-group .icon {
   color: hsl(var(--muted-foreground));
 }
@@ -222,12 +152,6 @@ textarea:focus {
   border-color: hsl(var(--ring));
 }
 
-/* RANGE – usa primary */
-.slider-track {
-  height: 4px;
-  background: hsl(var(--border));
-  border-radius: 9999px;
-}
 input[type="range"]::-webkit-slider-thumb,
 input[type="range"]::-moz-range-thumb {
   background: hsl(var(--primary));

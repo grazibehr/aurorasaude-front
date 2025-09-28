@@ -1,5 +1,5 @@
 (function () {
-  const { getPath, render } = window.Router;
+  const { obterRotaAtual } = window.Router;
 
   function highlightActive(path) {
     const current = `#${path}`;
@@ -9,9 +9,8 @@
   }
 
   function router() {
-    const path = getPath();
+    const path = obterRotaAtual();
 
-    render(path); // 1) monta o template
     highlightActive(path);
     window.scrollTo({ top: 0, behavior: "auto" });
 
@@ -19,7 +18,7 @@
       window.hooks?.[path]?.();
     } catch (e) {
       console.error(e);
-    } // 2) liga eventos
+    }
   }
 
   window.addEventListener("hashchange", router);

@@ -1,6 +1,5 @@
-// ./js/hooks/auth-ui.js
 (function () {
-  function setAlert(el, type, msg) {
+  function exibirAlerta(el, type, msg) {
     if (!el) return;
     el.textContent = msg;
     el.className =
@@ -13,30 +12,40 @@
     el.classList.remove("hidden");
   }
 
-  function bindPasswordToggles(root) {
+  function alternarSenha(root) {
     root.querySelectorAll("[data-pass-target]").forEach((btn) => {
       btn.addEventListener("click", () => {
         const sel = btn.getAttribute("data-pass-target");
         const input = root.querySelector(sel);
         if (!input) return;
-        const isPwd = input.type === "password";
-        input.type = isPwd ? "text" : "password";
-        btn.textContent = isPwd ? "ocultar" : "mostrar";
-        btn.setAttribute(
-          "aria-label",
-          isPwd ? "Ocultar Senha" : "Mostrar Senha"
-        );
+
+        const mostrando = input.type === "text";
+        input.type = mostrando ? "password" : "text";
+
+        const novoLabel = mostrando ? "Mostrar senha" : "Ocultar senha";
+        btn.setAttribute("aria-label", novoLabel);
+        btn.setAttribute("aria-pressed", String(!mostrando));
+        btn.title = novoLabel;
+
+        const sr = btn.querySelector(".sr-only");
+        if (sr) sr.textContent = novoLabel;
+
+        const icon = btn.querySelector("[data-lucide]");
+        if (icon) {
+          icon.setAttribute("data-lucide", mostrando ? "eye" : "eye-closed");
+          if (window.lucide?.createIcons) window.lucide.createIcons();
+        }
       });
     });
   }
 
-  function gotoIntendedOrHome() {
+  function redirecionarPosAuth() {
     const intended = sessionStorage.getItem("INTENDED_ROUTE");
     if (intended) sessionStorage.removeItem("INTENDED_ROUTE");
     location.hash = `#${intended || "/home"}`;
   }
 
-  function init() {
+  function iniciarAuthUI() {
     const loginTab = document.getElementById("authTabLogin");
     const registerTab = document.getElementById("authTabRegister");
     const loginForm = document.getElementById("authFormLogin");
@@ -48,10 +57,10 @@
     loginForm.__bound = true;
     registerForm.__bound = true;
 
-    const showLoginForm = () => {
+    const formEntrar = () => {
       loginTab.classList.add("tab-button-active");
       loginTab.classList.remove("tab-button-inactive");
-      loginTab.style.background = "var(--gradient-aurora)";
+      loginTab.style.background = "var(--primary-purple)";
       loginTab.setAttribute("aria-selected", "true");
 
       registerTab.style.background = "transparent";
@@ -64,10 +73,10 @@
       document.getElementById("authLoginEmail")?.focus();
     };
 
-    const showRegisterForm = () => {
+    const formCadastrar = () => {
       registerTab.classList.add("tab-button-active");
       registerTab.classList.remove("tab-button-inactive");
-      registerTab.style.background = "var(--gradient-aurora)";
+      registerTab.style.background = "var(--primary-purple)";
       registerTab.setAttribute("aria-selected", "true");
 
       loginTab.style.background = "transparent";
@@ -80,22 +89,11 @@
       document.getElementById("authRegName")?.focus();
     };
 
-    loginTab.addEventListener("click", showLoginForm);
-    registerTab.addEventListener("click", showRegisterForm);
-    bindPasswordToggles(document);
+    loginTab.addEventListener("click", formEntrar);
+    registerTab.addEventListener("click", formCadastrar);
+    alternarSenha(document);
 
-    // ====== Handlers só depois que Auth cliente estiver pronto
     const bootHandlers = () => {
-      if (!window.Auth?.login || !window.Auth?.signup) {
-        setAlert(
-          authAlert,
-          "error",
-          "Cliente de autenticação não está disponível."
-        );
-        return;
-      }
-
-      // ---- Login
       let logging = false;
       loginForm.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -116,16 +114,16 @@
         const password = document.getElementById("authLoginPass")?.value || "";
 
         try {
-          const data = await window.Auth.login({ email, password });
+          const data = await window.Auth.entrar({ email, password });
           if (!data?.ok) throw new Error(data?.message || "Falha no login");
-          setAlert(
+          exibirAlerta(
             authAlert,
             "success",
             data?.message || "Login efetuado com sucesso!"
           );
-          gotoIntendedOrHome();
+          redirecionarPosAuth();
         } catch (err) {
-          setAlert(authAlert, "error", err.message || "Erro no login");
+          exibirAlerta(authAlert, "error", err.message || "Erro no login");
         } finally {
           logging = false;
           if (btn) {
@@ -135,7 +133,6 @@
         }
       });
 
-      // ---- Cadastro
       registerForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const name = document.getElementById("authRegName").value.trim();
@@ -148,13 +145,17 @@
 
         const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRx.test(email))
-          return setAlert(authAlert, "error", "Digite um e-mail válido.");
+          return exibirAlerta(authAlert, "error", "Digite um e-mail válido.");
         if (!name)
-          return setAlert(authAlert, "error", "Informe seu nome completo.");
+          return exibirAlerta(authAlert, "error", "Informe seu nome completo.");
         if (password.length < 6)
-          return setAlert(authAlert, "error", "Senha mínima de 6 caracteres.");
+          return exibirAlerta(
+            authAlert,
+            "error",
+            "Senha mínima de 6 caracteres."
+          );
         if (password !== confirm)
-          return setAlert(authAlert, "error", "As senhas não coincidem.");
+          return exibirAlerta(authAlert, "error", "As senhas não coincidem.");
 
         const btn = registerForm.querySelector('button[type="submit"]');
         const prev = btn.textContent;
@@ -162,39 +163,39 @@
         btn.textContent = "Criando…";
 
         try {
-          const res = await window.Auth.signup({ name, email, password });
+          const res = await window.Auth.cadastrar({ name, email, password });
           if (!res?.ok) throw new Error(res?.message || "Falha no cadastro");
-          setAlert(
+          exibirAlerta(
             authAlert,
             "success",
             res?.message || "Conta criada! Redirecionando…"
           );
-          gotoIntendedOrHome();
+          redirecionarPosAuth();
         } catch (err) {
-          setAlert(authAlert, "error", err.message || "Erro ao criar conta.");
+          exibirAlerta(
+            authAlert,
+            "error",
+            err.message || "Erro ao criar conta."
+          );
         } finally {
           btn.disabled = false;
           btn.textContent = prev;
         }
       });
 
-      // Se já está logado e por algum motivo caiu no /auth, manda pra intended
-      if (window.Auth.getToken && window.Auth.getToken()) {
-        gotoIntendedOrHome();
+      if (window.Auth.obterToken && window.Auth.obterToken()) {
+        redirecionarPosAuth();
       }
     };
 
-    // Liga handlers quando Auth estiver pronto
     if (window.Auth) {
       bootHandlers();
     } else {
       document.addEventListener("auth:ready", bootHandlers, { once: true });
     }
 
-    // estado inicial
-    showLoginForm();
+    formEntrar();
   }
 
-  // expõe UI como AuthUI (não conflita com o client Auth)
-  window.AuthUI = { init };
+  window.AuthUI = { iniciarAuthUI };
 })();

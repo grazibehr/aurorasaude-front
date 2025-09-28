@@ -1,37 +1,33 @@
-// js/services/user-symptoms.js
 (function () {
   const API = "http://127.0.0.1:5000/usuario/sintoma";
 
-  function headersJson({ includeContentType = true } = {}) {
+  function headersJson({ incluirContentType = true } = {}) {
     const token = window.Auth?.getToken?.();
     return {
-      ...(includeContentType ? { "Content-Type": "application/json" } : {}),
+      ...(incluirContentType ? { "Content-Type": "application/json" } : {}),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
   }
 
-  async function getJsonWithHeaders(url) {
+  async function getJSON(url) {
     const r = await fetch(url, { headers: headersJson() });
     const data = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error(data.message || `HTTP ${r.status}`);
     return { data, headers: r.headers };
   }
 
-  async function sendJson(url, method, body) {
+  async function enviarJson(url, metodo, corpo) {
     const r = await fetch(url, {
-      method,
-      headers: headersJson(), // POST/PATCH com Content-Type
-      body: JSON.stringify(body),
+      method: metodo,
+      headers: headersJson(),
+      body: JSON.stringify(corpo),
     });
-    // no create você retorna 201 + json; no patch pode ser 200 + json
     const data = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error(data.message || `HTTP ${r.status}`);
     return data;
   }
 
-  // ------ endpoints ------
-  // Suporta query opcional (ex.: ?from=...&to=...&type=...)
-  function buildQuery(params = {}) {
+  function montarQuery(params = {}) {
     const q = new URLSearchParams();
     Object.entries(params).forEach(([k, v]) => {
       if (v !== undefined && v !== null && v !== "") q.append(k, v);
@@ -40,21 +36,18 @@
     return s ? `?${s}` : "";
   }
 
-  async function list(params = {}) {
-    const { data, headers } = await getJsonWithHeaders(
-      `${API}/lista${buildQuery(params)}`
+  async function listar(params = {}) {
+    const { data, headers } = await getJSON(
+      `${API}/lista${montarQuery(params)}`
     );
-
-    // O back manda { items: [...] } e X-Total-Count
     const items = Array.isArray(data?.items) ? data.items : [];
     const total = Number(headers.get("X-Total-Count") || items.length);
-
     return { items, total };
   }
 
-  async function listWithMeta({ limit, ...params } = {}) {
-    const { items, total } = await list(params);
-    const sorted = items
+  async function listarComMeta({ limit, ...params } = {}) {
+    const { items, total } = await listar(params);
+    const ordenados = items
       .map((x) => ({
         ...x,
         _ts: Date.parse(x.date) || Date.parse(x.created_at) || 0,
@@ -63,25 +56,23 @@
       .map(({ _ts, ...x }) => x);
 
     return {
-      items: typeof limit === "number" ? sorted.slice(0, limit) : sorted,
+      items: typeof limit === "number" ? ordenados.slice(0, limit) : ordenados,
       total,
     };
   }
 
-  async function create(payload) {
-    // POST /usuario/sintoma/user
-    return sendJson(`${API}/user`, "POST", payload);
+  async function criar(payload) {
+    return enviarJson(`${API}/user`, "POST", payload);
   }
 
-  async function patch(id, partial) {
-    // PATCH /usuario/sintoma/user/:id  (teu back já espera isso)
-    return sendJson(`${API}/${id}`, "PATCH", partial);
+  async function atualizar(id, parcial) {
+    return enviarJson(`${API}/${id}`, "PATCH", parcial);
   }
 
-  async function remove(symptom_id) {
-    const r = await fetch(`${API}/${symptom_id}`, {
+  async function remover(idSintoma) {
+    const r = await fetch(`${API}/${idSintoma}`, {
       method: "DELETE",
-      headers: headersJson({ includeContentType: false }),
+      headers: headersJson({ incluirContentType: false }),
     });
 
     if (r.status === 204) return true;
@@ -95,10 +86,10 @@
 
   window.UserSymptoms = {
     ...(window.UserSymptoms || {}),
-    list,
-    listWithMeta,
-    create,
-    patch,
-    remove,
+    list: listar,
+    listWithMeta: listarComMeta,
+    create: criar,
+    patch: atualizar,
+    remove: remover,
   };
 })();

@@ -1,18 +1,33 @@
 (function () {
-  // ---------- DOM helpers ----------
   const $ = (id) => document.getElementById(id);
-  const DAY = 86400e3;
-  const avg = (arr) =>
+
+  const DIA = 86400e3;
+  const media = (arr) =>
     arr.length ? arr.reduce((s, n) => s + n, 0) / arr.length : 0;
-  const parseDate = (s) => {
+
+  const parseData = (s) => {
     if (s == null) return null;
-    if (typeof s === "number") return s > 1e12 ? s : s * 1000; // ms ou s
+    if (typeof s === "number") return s > 1e12 ? s : s * 1000;
     const t = Date.parse(s);
     return Number.isNaN(t) ? null : t;
   };
 
-  // ---------- Fetch (pagina <=100) ----------
-  async function fetchUserItems() {
+  function lucideIcons(name = "") {
+    const s = String(name).toLowerCase();
+    if (s.includes("febre"))
+      return { icon: "thermometer", color: "text-amber-600" };
+    if (s.includes("fadiga")) return { icon: "bed", color: "text-rose-600" };
+    if (s.includes("náusea") || s.includes("enjoo"))
+      return { icon: "stethoscope", color: "text-emerald-600" };
+    if (s.includes("calafrio"))
+      return { icon: "cloud-lightning", color: "text-indigo-600" };
+    if (s.includes("tosse")) return { icon: "wind", color: "text-slate-600" };
+    if (s.includes("cefaleia") || s.includes("cabeça"))
+      return { icon: "brain", color: "text-violet-600" };
+    return { icon: "flame", color: "text-yellow-600" };
+  }
+
+  async function obtemSintomasUsuario() {
     const svc = window.UserSymptoms || {};
     const PAGE_SIZE = 100;
     try {
@@ -33,79 +48,88 @@
         return Array.isArray(data) ? data : data?.items || [];
       }
     } catch (e) {
-      console.warn("[home-insights] fetchUserItems erro:", e);
+      console.warn("[home-insights] erro ao obter sintomas do usuário:", e);
     }
     return [];
   }
 
-  // ---------- Cálculos ----------
-  function sliceWindow(items, startMs, endMs) {
+  function fatiarJanela(items, inicioMs, fimMs) {
     return items.filter((x) => {
-      const t = parseDate(x.date);
-      return t !== null && t >= startMs && t < endMs;
+      const t = parseData(x.date);
+      return t !== null && t >= inicioMs && t < fimMs;
     });
   }
 
-  function computeInsights(items, rangeDays) {
+  function computarInsights(items, diasJanela) {
     const norm = items.map((x) => ({
       name: x.symptom_name || x.label || x.symptom || x.type || "Outro",
       level: Number(x.pain_level ?? x.intensity ?? x.level ?? 0),
       date: x.date,
     }));
 
-    const now = Date.now();
-    const start = now - rangeDays * DAY;
-    const prevStart = now - 2 * rangeDays * DAY;
-    const prevEnd = now - rangeDays * DAY;
+    const agora = Date.now();
+    const inicio = agora - diasJanela * DIA;
+    const prevInicio = agora - 2 * diasJanela * DIA;
+    const prevFim = agora - diasJanela * DIA;
 
-    const cur = sliceWindow(norm, start, now);
-    const prev = sliceWindow(norm, prevStart, prevEnd);
+    const atual = fatiarJanela(norm, inicio, agora);
+    const anterior = fatiarJanela(norm, prevInicio, prevFim);
 
-    const total = cur.length;
-    const totalPrev = prev.length;
+    const total = atual.length;
+    const totalPrev = anterior.length;
     const delta = totalPrev
       ? (total - totalPrev) / totalPrev
       : total > 0
       ? 1
       : 0;
 
-    const painAvg = avg(
-      cur.map((x) => x.level).filter((n) => Number.isFinite(n) && n > 0)
+    const dorMedia = media(
+      atual.map((x) => x.level).filter((n) => Number.isFinite(n) && n > 0)
     );
 
-    const count = new Map();
-    cur.forEach((x) => count.set(x.name, (count.get(x.name) || 0) + 1));
-    const [topName, topCount] = [...count.entries()].sort(
+    const contagem = new Map();
+    atual.forEach((x) => contagem.set(x.name, (contagem.get(x.name) || 0) + 1));
+    const [topName, topCount] = [...contagem.entries()].sort(
       (a, b) => b[1] - a[1]
     )[0] || ["—", 0];
 
-    return { total, totalPrev, delta, painAvg, topName, topCount };
+    return { total, totalPrev, delta, painAvg: dorMedia, topName, topCount };
   }
 
-  // ---------- Pintura ----------
-  function paintInsights(ins, rangeDays) {
-    const pct = (n) => `${(n * 100).toFixed(0)}%`;
+  function renderizarRosquinhaDor(container, valor, max = 10) {
+    const r = 36;
+    const C = 2 * Math.PI * r;
+    const v = Math.max(0, Math.min(valor || 0, max));
+    const pct = v / max;
 
-    // título/label
-    const title = $("insights-title");
-    if (title) title.textContent = `Insights últimos ${rangeDays} dias`;
+    const ring = container.querySelector("[data-circ]");
+    const t = container.querySelector("[data-value]");
 
-    // KPIs
+    ring.setAttribute("stroke-dasharray", `${C} ${C}`);
+    ring.setAttribute("stroke-dashoffset", `${(1 - pct) * C}`);
+    t.textContent = v ? v.toFixed(1) : "—";
+
+    const tag = document.getElementById("ins-kpi-avg-tag");
+    const num = document.getElementById("ins-kpi-avg");
+    if (num) num.textContent = v ? v.toFixed(1) : "—";
+
+    let label = "Moderada";
+    let stroke = "var(--primary)";
+    if (v < 4) {
+      label = "Baixa";
+      stroke = "#10B981";
+    } else if (v >= 7) {
+      label = "Alta";
+      stroke = "#EF4444";
+    }
+
+    ring.setAttribute("stroke", stroke);
+    if (tag) tag.textContent = label;
+  }
+
+  function pintarInsights(ins, diasJanela) {
     const totalEl = $("ins-kpi-total");
     if (totalEl) totalEl.textContent = String(ins.total);
-
-    const deltaEl = $("ins-kpi-total-delta");
-    if (deltaEl) {
-      const up = ins.delta >= 0;
-      deltaEl.className = `badge ${up ? "badge-up" : "badge-down"}`;
-      deltaEl.innerHTML =
-        (up
-          ? '<svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="currentColor"><path d="M7 14l5-5 5 5z"/></svg>'
-          : '<svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>') +
-        " " +
-        (ins.delta >= 0 ? "+" : "") +
-        pct(ins.delta);
-    }
 
     const avgEl = $("ins-kpi-avg");
     if (avgEl) avgEl.textContent = ins.painAvg ? ins.painAvg.toFixed(1) : "—";
@@ -119,124 +143,111 @@
       tag.style.color = "var(--foreground)";
     }
 
-    const topEl = $("ins-kpi-top");
-    if (topEl) topEl.textContent = ins.topName;
+    const donut = $("avg-pain-donut");
+    if (donut) renderizarRosquinhaDor(donut, ins.painAvg);
+
+    const topKpi = $("ins-kpi-top");
+    if (topKpi) topKpi.textContent = ins.topName || "—";
+
+    const topIconWrap = $("ins-kpi-top-icon");
+    if (topIconWrap) {
+      const { icon, color } = lucideIcons(ins.topName || "");
+      topIconWrap.innerHTML = `<i data-lucide="${icon}" class="w-6 h-6 ${color}"></i>`;
+      if (window.lucide?.createIcons) lucide.createIcons();
+    }
+
     const topCt = $("ins-kpi-top-count");
-    if (topCt)
+    if (topCt) {
       topCt.textContent = ins.topCount
         ? `${ins.topCount} ocorrência${ins.topCount > 1 ? "s" : ""}`
         : "— ocorrências";
-
-    // Frases
-    const f1 = $("ins-1");
-    if (f1)
-      f1.innerHTML = `Você registrou <strong>${ins.total}</strong> sintoma${
-        ins.total !== 1 ? "s" : ""
-      } nos últimos ${rangeDays} dias.`;
-
-    const f2 = $("ins-2");
-    if (f2) {
-      const label =
-        ins.painAvg >= 7 ? "alta" : ins.painAvg >= 4 ? "moderada" : "baixa";
-      f2.innerHTML = `Sua <strong>dor média</strong> está <strong>${label}</strong>.`;
     }
 
-    const f3 = $("ins-3");
-    if (f3)
-      f3.innerHTML = `O sintoma mais frequente foi <strong>${ins.topName}</strong>.`;
+    const totalTextEl = $("ins-total");
+    if (totalTextEl) totalTextEl.textContent = ins.total;
+
+    const rangeEl = $("ins-range");
+    if (rangeEl) rangeEl.textContent = diasJanela;
+
+    const labelEl = $("ins-avg-label");
+    if (labelEl)
+      labelEl.textContent =
+        ins.painAvg >= 7 ? "alta" : ins.painAvg >= 4 ? "moderada" : "baixa";
+
+    const topEl = $("ins-top");
+    if (topEl) topEl.textContent = ins.topName;
   }
 
-  function setActiveRangeButton(rangeDays) {
+  function definirBotaoRangeAtivo(diasJanela) {
     document.querySelectorAll("button[data-range]").forEach((btn) => {
-      const isActive = Number(btn.getAttribute("data-range")) === rangeDays;
-      btn.classList.toggle("btn-primary", isActive);
-      btn.classList.toggle("btn-plain", !isActive);
+      const ativo = Number(btn.getAttribute("data-range")) === diasJanela;
+      btn.classList.toggle("btn-primary", ativo);
+      btn.classList.toggle("btn-plain", !ativo);
     });
   }
 
-  // ---------- Orquestra ----------
   let CACHE = { items: null, ready: false };
-  let currentRange = 30;
+  function invalidarCache() {
+    CACHE = { items: null, ready: false };
+  }
 
-  async function ensureData() {
+  async function garantirDados() {
     if (CACHE.ready && Array.isArray(CACHE.items)) return CACHE.items;
-    const items = await fetchUserItems();
+    const items = await obtemSintomasUsuario();
     CACHE = { items, ready: true };
     return items;
   }
 
-  async function render(rangeDays) {
-    currentRange = rangeDays;
-    setActiveRangeButton(rangeDays);
-    const items = await ensureData();
-    const ins = computeInsights(items, rangeDays);
-    paintInsights(ins, rangeDays);
+  async function renderizar(diasJanela) {
+    definirBotaoRangeAtivo(diasJanela);
+    const items = await garantirDados();
+    const ins = computarInsights(items, diasJanela);
+    pintarInsights(ins, diasJanela);
   }
 
-  async function init() {
-    // Só roda se existir o título (evita executar em páginas sem o card)
-    if (!$("insights-title")) return;
+  let _iniciado = false;
+  function iniciar() {
+    if (_iniciado) return;
+    if (!document.getElementById("insights-title")) return;
+    _iniciado = true;
 
-    // Listeners dos botões de range
-    document.querySelectorAll("button[data-range]").forEach((btn) => {
-      btn.addEventListener("click", (ev) => {
-        const days = Number(ev.currentTarget.getAttribute("data-range")) || 30;
-        render(days);
-      });
+    document.addEventListener(
+      "click",
+      (ev) => {
+        const btn = ev.target.closest("button[data-range]");
+        if (!btn) return;
+        const days = Number(btn.getAttribute("data-range")) || 30;
+        renderizar(days);
+      },
+      { passive: true }
+    );
+
+    renderizar(30);
+  }
+
+  document.addEventListener("auth:change", () => {
+    invalidarCache();
+    requestAnimationFrame(() => {
+      iniciar();
+      renderizar(30);
     });
+  });
 
-    // Estado inicial = 30d
-    await render(30);
-  }
-
-  window.HomeInsights = { init, render }; // expõe manual se quiser trocar via console
-  document.addEventListener("DOMContentLoaded", init);
-})();
-
-(function () {
-  const toInt = (v, d = 30) => (Number.isFinite(Number(v)) ? Number(v) : d);
-
-  // troca visual só no header do grupo clicado
-  function setActiveInHeader(btn, activeDays) {
-    const header = btn.closest("header") || document;
-    header.querySelectorAll("button[data-range]").forEach((b) => {
-      const isActive = toInt(b.dataset.range) === activeDays;
-      b.classList.toggle("btn-primary", isActive);
-      b.classList.toggle("btn-plain", !isActive);
+  window.addEventListener("hashchange", () => {
+    requestAnimationFrame(() => {
+      iniciar();
+      if (document.getElementById("insights-title")) renderizar(30);
     });
-  }
+  });
 
-  document.addEventListener(
-    "click",
-    (ev) => {
-      const btn = ev.target.closest("button[data-range]");
-      if (!btn) return;
+  window.HomeInsights = {
+    iniciar,
+    renderizar,
+    invalidar: invalidarCache,
+    init: iniciar,
+    render: renderizar,
+    invalidate: invalidarCache,
+  };
 
-      const days = toInt(btn.dataset.range);
-      console.debug("[home-insights] click range:", days, btn);
-
-      try {
-        setActiveInHeader(btn, days);
-        if (window.HomeInsights?.render) {
-          window.HomeInsights.render(days);
-        } else {
-          console.warn(
-            "[home-insights] HomeInsights.render não encontrado. Confere a ordem dos scripts."
-          );
-        }
-      } catch (e) {
-        console.error("[home-insights] erro ao trocar range:", e);
-      }
-    },
-    { passive: true }
-  );
-
-  // Garante estado inicial mesmo se o init não rodar por timing
-  if (window.HomeInsights?.render) {
-    window.HomeInsights.render(30);
-  } else {
-    document.addEventListener("DOMContentLoaded", () => {
-      window.HomeInsights?.render?.(30);
-    });
-  }
+  document.addEventListener("DOMContentLoaded", iniciar);
 })();
