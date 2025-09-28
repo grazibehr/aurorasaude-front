@@ -25,7 +25,8 @@ O sistema **Aurora Saúde** tem como finalidade auxiliar no **registro e monitor
 - **HTML5** → estrutura da aplicação.  
 - **CSS3** → customizações adicionais.  
 - **JavaScript** → interatividade, manipulação do DOM e armazenamento local.
-- **Tailwind CSS (via CDN)** → estilização rápida e responsiva.  
+- **Tailwind CSS (via CDN)** → estilização rápida e responsiva.
+- **Lucide Icons (via CDN)** → ícones modernos e leves para a interface.
 
 ---
 
