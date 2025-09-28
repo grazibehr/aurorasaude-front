@@ -170,7 +170,10 @@
             "success",
             res?.message || "Conta criada! Redirecionando…"
           );
-          redirecionarPosAuth();
+          if (window.Auth?.sair) window.Auth.sair();
+          const loginTab = document.getElementById("authTabLogin");
+          if (loginTab) loginTab.click();
+          location.hash = "#/auth";
         } catch (err) {
           exibirAlerta(
             authAlert,
